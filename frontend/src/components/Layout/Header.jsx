@@ -9,7 +9,7 @@ import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
 import Wishlist from "../Wishlist/Wishlist";
 import { RxCross1 } from "react-icons/rx";
-
+import { ImgUrl } from "../../static/data";
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { isSeller } = useSelector((state) => state.seller);
@@ -113,7 +113,7 @@ const Header = ({ activeHeading }) => {
           <div>
             <Link to="/">
               <img
-                src="https://i.postimg.cc/3xs2fqf7/puma.jpg"
+                src={ImgUrl}
                 alt="Logo"
                 className="w-[60px] h-[60px] object-contain rounded-full"
               />
@@ -336,7 +336,7 @@ const Header = ({ activeHeading }) => {
           <div>
             <Link to="/">
               <img
-                src="https://i.postimg.cc/3xs2fqf7/puma.jpg"
+                src={ImgUrl}
                 alt="Logo"
                 className="max-w-[40px] max-h-[40px] object-contain cursor-pointer rounded-full hover:opacity-80 transition-opacity duration-200"
               />

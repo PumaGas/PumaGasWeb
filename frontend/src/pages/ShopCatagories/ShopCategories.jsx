@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/Layout/Header";
-import { categoriesData } from "../../static/data";
+import { categoriesData, ImgUrl } from "../../static/data";
 import { IoIosArrowForward } from "react-icons/io";
 import Footer from "../../components/Layout/Footer";
 import styles from "../../styles/styles";
@@ -25,7 +25,7 @@ const ShopCategories = () => {
               >
                 <div className="relative">
                   <img
-                    src={category.image_Url || "https://i.postimg.cc/3xs2fqf7/puma.jpg"}
+                    src={category.image_Url || {ImgUrl}}
                     alt={category.title}
                     className="w-full h-48 object-cover"
                   />

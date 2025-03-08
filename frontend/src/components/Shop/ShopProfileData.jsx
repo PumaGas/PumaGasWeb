@@ -1,134 +1,211 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import { getAllProductsShop } from "../../redux/actions/product";
+import { backend_url, server } from "../../server";
+import { AiOutlineCamera } from "react-icons/ai";
 import styles from "../../styles/styles";
-import ProductCard from "../Route/ProductCard/ProductCard";
-import Ratings from "../Products/Ratings";
-import { getAllEventsShop } from "../../redux/actions/event";
+import axios from "axios";
+import { loadSeller } from "../../redux/actions/user";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "../Layout/Loader";
 
-const ShopProfileData = ({ isOwner }) => {
-  const { products } = useSelector((state) => state.products);
-  const { events } = useSelector((state) => state.events);
-  const { id } = useParams();
+const ShopSettings = ({ logoutHandler }) => {
+  const { seller } = useSelector((state) => state.seller);
+  const [avatar, setAvatar] = useState(null);
+  const [name, setName] = useState(seller?.name || "");
+  const [description, setDescription] = useState(seller?.description || "");
+  const [address, setAddress] = useState(seller?.address || "");
+  const [phoneNumber, setPhoneNumber] = useState(seller?.phoneNumber || "");
+  const [zipCode, setZipcode] = useState(seller?.zipCode || "");
+  const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getAllProductsShop(id));
-    dispatch(getAllEventsShop(id));
-  }, [dispatch]);
+  const handleImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const [active, setActive] = useState(1);
+    setIsLoading(true);
+    const form = new FormData();
+    form.append("avatar", file);
 
-  const allReviews =
-    products && products.map((product) => product.reviews).flat();
+    try {
+      await axios.put(`${server}/shop/update-shop-avatar`, form, {
+        withCredentials: true,
+      });
+      dispatch(loadSeller());
+      setAvatar(URL.createObjectURL(file));
+      toast.success("Avatar updated successfully!");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update avatar");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateHandler = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await axios.put(
+        `${server}/shop/update-seller-info`,
+        { name, address, zipCode, phoneNumber, description },
+        { withCredentials: true }
+      );
+      toast.success("Shop info updated successfully!");
+      dispatch(loadSeller());
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update shop info");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="w-full">
-      <div className="flex w-full items-center justify-between">
-        <div className="w-full flex">
-          <div className="flex items-center" onClick={() => setActive(1)}>
-            <h5
-              className={`font-[600] text-[20px] ${
-                active === 1 ? "text-red-500" : "text-[#333]"
-              } cursor-pointer pr-[20px]`}
-            >
-              Shop Products
-            </h5>
-          </div>
-          <div className="flex items-center" onClick={() => setActive(2)}>
-            <h5
-              className={`font-[600] text-[20px] ${
-                active === 2 ? "text-red-500" : "text-[#333]"
-              } cursor-pointer pr-[20px]`}
-            >
-              Running Events
-            </h5>
-          </div>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="w-full bg-white shadow-md rounded-md p-6">
+          {/* Header */}
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+            Shop Settings
+          </h2>
 
-          <div className="flex items-center" onClick={() => setActive(3)}>
-            <h5
-              className={`font-[600] text-[20px] ${
-                active === 3 ? "text-red-500" : "text-[#333]"
-              } cursor-pointer pr-[20px]`}
-            >
-              Shop Reviews
-            </h5>
-          </div>
-        </div>
-        <div>
-          {isOwner && (
-            <div>
-              <Link to="/dashboard">
-                <div className={`${styles.button} !rounded-[4px] h-[42px]`}>
-                  <span className="text-[#fff]">Go Dashboard</span>
-                </div>
-              </Link>
+          {/* Avatar Section */}
+          <div className="flex justify-center mb-8">
+            <div className="relative">
+              <img
+                src={
+                  avatar ||
+                  (seller?.avatar?.url
+                    ? `${backend_url}${seller.avatar.url}`
+                    : "https://via.placeholder.com/150")
+                }
+                alt="Shop Avatar"
+                className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
+              />
+              <label
+                htmlFor="image"
+                className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full cursor-pointer text-white hover:bg-blue-600 transition"
+              >
+                <AiOutlineCamera size={20} />
+                <input
+                  type="file"
+                  id="image"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImage}
+                />
+              </label>
             </div>
-          )}
-        </div>
-      </div>
-
-      <br />
-      {active === 1 && (
-        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-0">
-          {products &&
-            products.map((i, index) => (
-              <ProductCard data={i} key={index} isShop={true} />
-            ))}
-        </div>
-      )}
-
-      {active === 2 && (
-        <div className="w-full">
-          <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-0">
-            {events &&
-              events.map((i, index) => (
-                <ProductCard
-                  data={i}
-                  key={index}
-                  isShop={true}
-                  isEvent={true}
-                />
-              ))}
           </div>
-          {events && events.length === 0 && (
-            <h5 className="w-full text-center py-5 text-[18px]">
-              No Events have for this shop!
-            </h5>
-          )}
-        </div>
-      )}
 
-      {active === 3 && (
-        <div className="w-full">
-          {allReviews &&
-            allReviews.map((item, index) => (
-              <div className="w-full flex my-4">
-                <img
-                  src={`${item.user.avatar?.url}`}
-                  className="w-[50px] h-[50px] rounded-full"
-                  alt=""
-                />
-                <div className="pl-2">
-                  <div className="flex w-full items-center">
-                    <h1 className="font-[600] pr-2">{item.user.name}</h1>
-                    <Ratings rating={item.rating} />
-                  </div>
-                  <p className="font-[400] text-[#000000a7]">{item?.comment}</p>
-                  <p className="text-[#000000a7] text-[14px]">{"2days ago"}</p>
-                </div>
-              </div>
-            ))}
-          {allReviews && allReviews.length === 0 && (
-            <h5 className="w-full text-center py-5 text-[18px]">
-              No Reviews have for this shop!
-            </h5>
-          )}
+          {/* Shop Info Form */}
+          <form onSubmit={updateHandler} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Shop Name
+              </label>
+              <input
+                type="text"
+                placeholder={seller?.name || "Enter shop name"}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={`${styles.input} w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500`}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Shop Description
+              </label>
+              <textarea
+                placeholder={
+                  seller?.description
+                    ? seller.description
+                    : "Enter your shop description"
+                }
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className={`${styles.input} w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500`}
+                rows="3"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Shop Address
+              </label>
+              <input
+                type="text"
+                placeholder={seller?.address || "Enter shop address"}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className={`${styles.input} w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500`}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Shop Phone Number
+              </label>
+              <input
+                type="number"
+                placeholder={seller?.phoneNumber || "Enter phone number"}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className={`${styles.input} w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500`}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Shop Zip Code
+              </label>
+              <input
+                type="number"
+                placeholder={seller?.zipCode || "Enter zip code"}
+                value={zipCode}
+                onChange={(e) => setZipcode(e.target.value)}
+                className={`${styles.input} w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500`}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition font-medium"
+            >
+              Update Shop
+            </button>
+          </form>
+
+          {/* Logout Button */}
+          <button
+            onClick={logoutHandler}
+            className="w-full mt-4 bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition font-medium"
+          >
+            Logout
+          </button>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
-export default ShopProfileData;
+export default ShopSettings;

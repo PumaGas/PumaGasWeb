@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import Ratings from "./Ratings";
 import axios from "axios";
 import { server } from "../../server";
+import { ImgUrl } from "../../static/data";
 
 const ProductDetails = ({ data }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -251,7 +252,7 @@ const ProductDetails = ({ data }) => {
                       src={
                         data?.shop?.avatar?.url
                           ? data.shop.avatar.url
-                          : "https://i.postimg.cc/3xs2fqf7/puma.jpg"
+                          :{ImgUrl}
                       }
                       alt=""
                       className="w-[50px] h-[50px] rounded-full mr-2"

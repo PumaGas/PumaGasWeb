@@ -219,3 +219,6 @@ export const footerSupportLinks = [
   { name: "FAQ", link: "/faq" },
   { name: "Contact Us", link: "/contact" },
 ];
+export const MissionImg = "https://i.postimg.cc/3wJ1vJ1V/mission-image.jpg";
+export const ProductsImg = "https://i.postimg.cc/3wJ1vJ1V/mission-image.jpg";
+export const ImgUrl="https://i.postimg.cc/3xs2fqf7/puma.jpg";

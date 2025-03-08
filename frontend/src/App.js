@@ -49,7 +49,8 @@ import UpdateHomeBanner from "./pages/Dashboard/UpdateHomeBanner.jsx";
 import UpdateCategoryBanner from "./pages/Dashboard/UpdateCategoryBanner.jsx";
 import ShopCategories from "./pages/ShopCatagories/ShopCategories.jsx";
 import ContactUs from "./pages/Contacts/ContactUs";
-import StoreLocation from "./pages/Contacts/StoreLocation/StoreLocation.jsx";
+import StoreLocation from "./pages/LocationMap/StoreLocation";
+import AboutUs from "./pages/AboutUs/AboutUs.jsx";
 const App = () => {
   const [stripeApikey, setStripeApiKey] = useState("");
   console.log("API URL:", process.env.REACT_APP_BACKEND_URL);
@@ -110,6 +111,8 @@ const App = () => {
         {/* shop Routes */}
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/store-locations" element={<StoreLocation />} />
         <Route
           path="/shop/:id"
           element={

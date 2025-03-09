@@ -38,7 +38,7 @@ const CategoryBannerContent = ({ category, subCategory }) => {
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const subCategoryData = searchParams.get("subcategory");
-  const categoryData = searchParams.get("category"); // Assuming category is passed as a query param
+  const categoryData = searchParams.get("category");
   const { allProducts, isLoading } = useSelector((state) => state.products);
   const [data, setData] = useState([]);
   const [banners, setBanners] = useState([]);
@@ -62,11 +62,11 @@ const ProductsPage = () => {
       if (response.data.success && response.data.productBanners.length > 0) {
         setBanners(response.data.productBanners[0].banners || []);
       } else {
-        setBanners([]); // Reset if no banners found
+        setBanners([]);
       }
     } catch (error) {
       console.error("Failed to fetch category banners:", error);
-      setBanners([]); // Set empty if API call fails
+      setBanners([]);
     }
   };
 
@@ -114,6 +114,9 @@ const ProductsPage = () => {
     arrows: false,
   };
 
+  // Filter out null or empty banners
+  const validBanners = banners.filter((banner) => banner !== null && banner !== "");
+
   return (
     <>
       {isLoading ? (
@@ -122,49 +125,47 @@ const ProductsPage = () => {
         <div>
           <Header activeHeading={4} />
 
-          {/* Updated Banner Section - Aligned with Hero Component */}
-          <div className="relative w-full min-h-[70vh] 800px:min-h-[80vh] mt-4">
-            {banners.length > 1 ? (
-              <Slider {...sliderSettings} className="w-full h-full">
-                {banners.map((banner, index) => (
-                  <div
-                    key={index}
-                    className="relative w-full h-[70vh] 800px:h-[80vh]"
-                  >
-                    <img
-                      src={banner}
-                      alt={`Banner ${index + 1}`}
-                      className="absolute top-0 left-0 w-full h-full object-cover"
-                    />
-                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
-                      <CategoryBannerContent
-                        category={categoryData}
-                        subCategory={subCategoryData}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </Slider>
-            ) : banners.length === 1 ? (
-              <div className="relative w-full h-[70vh] 800px:h-[80vh]">
-                <img
-                  src={banners[0]}
-                  alt="Banner"
-                  className="absolute top-0 left-0 w-full h-full object-cover"
-                />
-                <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
-                  <CategoryBannerContent
-                    category={categoryData}
-                    subCategory={subCategoryData}
+          {/* Banner Section - Only render if valid banners exist */}
+          {validBanners.length > 0 && (
+            <div className="relative w-full min-h-[70vh] 800px:min-h-[80vh] mt-4">
+              {validBanners.length === 1 ? (
+                <div className="relative w-full h-[70vh] 800px:h-[80vh]">
+                  <img
+                    src={validBanners[0]}
+                    alt="Banner"
+                    className="absolute top-0 left-0 w-full h-full object-cover"
                   />
+                  {/* <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
+                    <CategoryBannerContent
+                      category={categoryData}
+                      subCategory={subCategoryData}
+                    />
+                  </div> */}
                 </div>
-              </div>
-            ) : (
-              <div className="relative w-full h-[70vh] 800px:h-[80vh] flex items-center justify-center bg-gray-200">
-                <h2 className="text-gray-500 text-2xl">No banners available</h2>
-              </div>
-            )}
-          </div>
+              ) : validBanners.length >= 2 ? (
+                <Slider {...sliderSettings} className="w-full h-full">
+                  {validBanners.map((banner, index) => (
+                    <div
+                      key={index}
+                      className="relative w-full h-[70vh] 800px:h-[80vh]"
+                    >
+                      <img
+                        src={banner}
+                        alt={`Banner ${index + 1}`}
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                      />
+                      {/* <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
+                        <CategoryBannerContent
+                          category={categoryData}
+                          subCategory={subCategoryData}
+                        />
+                      </div> */}
+                    </div>
+                  ))}
+                </Slider>
+              ) : null}
+            </div>
+          )}
 
           {/* Product Section with ID for anchor link */}
           <div className={`${styles.section} mt-5`} id="products-grid">
@@ -190,7 +191,7 @@ const ProductsPage = () => {
               ) : (
                 <div className="w-full flex justify-center items-center mt-10">
                   <h1 className="text-center text-[20px] font-semibold text-gray-600">
-                   Coming Soon...
+                    Coming Soon...
                   </h1>
                 </div>
               )}

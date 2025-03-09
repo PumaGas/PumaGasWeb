@@ -5,10 +5,10 @@ const router = express.Router();
 const Product = require("../model/product");
 const Order = require("../model/order");
 const Shop = require("../model/shop");
-const cloudinary = require("cloudinary");
+const cloudinary = require("cloudinary").v2; // Ensure v2 is explicitly used
 const ErrorHandler = require("../utils/ErrorHandler");
 
-// create product
+// Create product
 router.post(
   "/create-product",
   catchAsyncErrors(async (req, res, next) => {
@@ -17,63 +17,63 @@ router.post(
       const shop = await Shop.findById(shopId);
       if (!shop) {
         return next(new ErrorHandler("Shop Id is invalid!", 400));
+      }
+
+      let images = [];
+      if (typeof req.body.images === "string") {
+        images.push(req.body.images);
       } else {
-        let images = [];
+        images = req.body.images || [];
+      }
 
-        if (typeof req.body.images === "string") {
-          images.push(req.body.images);
-        } else {
-          images = req.body.images;
-        }
-      
-        const imagesLinks = [];
-      
-        for (let i = 0; i < images.length; i++) {
-          const result = await cloudinary.v2.uploader.upload(images[i], {
-            folder: "products",
-          });
-      
-          imagesLinks.push({
-            public_id: result.public_id,
-            url: result.secure_url,
-          });
-        }
-      
-        const productData = req.body;
-        productData.images = imagesLinks;
-        productData.shop = shop;
-
-        const product = await Product.create(productData);
-
-        res.status(201).json({
-          success: true,
-          product,
+      const imagesLinks = [];
+      for (let i = 0; i < images.length; i++) {
+        const result = await cloudinary.uploader.upload(images[i], {
+          folder: "products",
+          resource_type: "image",
+        });
+        imagesLinks.push({
+          public_id: result.public_id,
+          url: result.secure_url,
         });
       }
+
+      const productData = {
+        ...req.body,
+        images: imagesLinks,
+        shop,
+      };
+
+      const product = await Product.create(productData);
+
+      res.status(201).json({
+        success: true,
+        product,
+      });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
 
-// get all products of a shop
+// Get all products of a shop
 router.get(
   "/get-all-products-shop/:id",
   catchAsyncErrors(async (req, res, next) => {
     try {
       const products = await Product.find({ shopId: req.params.id });
 
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         products,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
 
-// delete product of a shop
+// Delete product of a shop
 router.delete(
   "/delete-shop-product/:id",
   isSeller,
@@ -82,51 +82,65 @@ router.delete(
       const product = await Product.findById(req.params.id);
 
       if (!product) {
-        return next(new ErrorHandler("Product is not found with this id", 404));
-      }    
-
-      for (let i = 0; 1 < product.images.length; i++) {
-        const result = await cloudinary.v2.uploader.destroy(
-          product.images[i].public_id
-        );
+        return next(new ErrorHandler("Product not found with this id", 404));
       }
-    
-      await product.remove();
 
-      res.status(201).json({
+      // Fixed loop condition (was `1 < product.images.length`)
+      for (let i = 0; i < product.images.length; i++) {
+        await cloudinary.uploader.destroy(product.images[i].public_id);
+      }
+
+      await product.deleteOne(); // Updated from `remove()` to `deleteOne()`
+
+      res.status(200).json({
         success: true,
-        message: "Product Deleted successfully!",
+        message: "Product deleted successfully!",
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
 
-router.put("/update-product/:id", async (req, res) => {
-  const { recommended } = req.body;
-  const product = await Product.findByIdAndUpdate(req.params.id, { recommended }, { new: true });
-  res.status(200).json({ success: true, product });
-});
+// Update product (recommended field)
+router.put(
+  "/update-product/:id",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { recommended } = req.body;
+      const product = await Product.findByIdAndUpdate(
+        req.params.id,
+        { recommended },
+        { new: true }
+      );
+      if (!product) {
+        return next(new ErrorHandler("Product not found", 404));
+      }
+      res.status(200).json({ success: true, product });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  })
+);
 
-// get all products
+// Get all products
 router.get(
   "/get-all-products",
   catchAsyncErrors(async (req, res, next) => {
     try {
       const products = await Product.find().sort({ createdAt: -1 });
 
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         products,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
 
-// review for a product
+// Create or update product review
 router.put(
   "/create-new-review",
   isAuthenticated,
@@ -135,6 +149,9 @@ router.put(
       const { user, rating, comment, productId, orderId } = req.body;
 
       const product = await Product.findById(productId);
+      if (!product) {
+        return next(new ErrorHandler("Product not found", 404));
+      }
 
       const review = {
         user,
@@ -144,13 +161,15 @@ router.put(
       };
 
       const isReviewed = product.reviews.find(
-        (rev) => rev.user._id === req.user._id
+        (rev) => rev.user._id.toString() === req.user._id.toString()
       );
 
       if (isReviewed) {
         product.reviews.forEach((rev) => {
-          if (rev.user._id === req.user._id) {
-            (rev.rating = rating), (rev.comment = comment), (rev.user = user);
+          if (rev.user._id.toString() === req.user._id.toString()) {
+            rev.rating = rating;
+            rev.comment = comment;
+            rev.user = user;
           }
         });
       } else {
@@ -158,11 +177,9 @@ router.put(
       }
 
       let avg = 0;
-
       product.reviews.forEach((rev) => {
         avg += rev.rating;
       });
-
       product.ratings = avg / product.reviews.length;
 
       await product.save({ validateBeforeSave: false });
@@ -175,25 +192,23 @@ router.put(
 
       res.status(200).json({
         success: true,
-        message: "Reviwed succesfully!",
+        message: "Reviewed successfully!",
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
 
-// all products --- for admin
+// Get all products (Admin)
 router.get(
   "/admin-all-products",
   isAuthenticated,
   isAdmin("Admin"),
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const products = await Product.find().sort({
-        createdAt: -1,
-      });
-      res.status(201).json({
+      const products = await Product.find().sort({ createdAt: -1 });
+      res.status(200).json({
         success: true,
         products,
       });
@@ -203,13 +218,12 @@ router.get(
   })
 );
 
-// check if stock is more than 0
+// Check if stock is more than 0
 router.get(
   "/check-stock/:id",
   catchAsyncErrors(async (req, res, next) => {
     try {
       const product = await Product.findById(req.params.id);
-
       if (!product) {
         return next(new ErrorHandler("Product not found", 404));
       }
@@ -221,24 +235,22 @@ router.get(
         inStock: isInStock,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
 
-// add one value to stock
+// Increment stock by one
 router.put(
   "/increment-stock/:id",
   catchAsyncErrors(async (req, res, next) => {
     try {
       const product = await Product.findById(req.params.id);
-
       if (!product) {
         return next(new ErrorHandler("Product not found", 404));
       }
 
       product.stock += 1;
-
       await product.save();
 
       res.status(200).json({
@@ -247,24 +259,22 @@ router.put(
         stock: product.stock,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
 
-// set stock to zero
+// Set stock to zero
 router.put(
   "/set-stock-zero/:id",
   catchAsyncErrors(async (req, res, next) => {
     try {
       const product = await Product.findById(req.params.id);
-
       if (!product) {
         return next(new ErrorHandler("Product not found", 404));
       }
 
       product.stock = 0;
-
       await product.save();
 
       res.status(200).json({
@@ -273,12 +283,12 @@ router.put(
         stock: product.stock,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );
 
-// get products by subcategory
+// Get products by subcategory
 router.get(
   "/get-products-by-subcategory/:subCategory",
   catchAsyncErrors(async (req, res, next) => {
@@ -290,7 +300,7 @@ router.get(
         products,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );

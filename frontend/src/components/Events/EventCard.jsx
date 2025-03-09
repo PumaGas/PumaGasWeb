@@ -18,7 +18,7 @@ const EventCard = ({ active, data }) => {
   const [orderDetails, setOrderDetails] = useState({
     customerName: "",
     customerEmail: "",
-    customerPhoneNumber: "", // Added new field
+    customerPhoneNumber: "+92", // Prefill with +92
     location: "",
     quantity: 1,
   });
@@ -48,11 +48,34 @@ const EventCard = ({ active, data }) => {
   };
 
   const handleInputChange = (e) => {
-    setOrderDetails({ ...orderDetails, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "customerPhoneNumber") {
+      const cleanedValue = value.replace(/[^0-9+]/g, ""); // Remove non-numeric except +
+      if (
+        cleanedValue === "" || // Allow empty input
+        (cleanedValue.startsWith("+92") && cleanedValue.length <= 13) // +92 + 10 digits = 13 chars
+      ) {
+        setOrderDetails({ ...orderDetails, [name]: cleanedValue });
+      }
+    } else {
+      setOrderDetails({ ...orderDetails, [name]: value });
+    }
+  };
+
+  const validatePhoneNumber = (phoneNumber) => {
+    const phoneRegex = /^\+923[0-4][0-9]{8}$/; // Matches +923XXXXXXXXXX (10 digits after +923)
+    return phoneRegex.test(phoneNumber);
   };
 
   const handleOrderSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate phone number
+    if (!validatePhoneNumber(orderDetails.customerPhoneNumber)) {
+      toast.error("Please enter a valid Pakistani phone number (e.g., +923001234567)");
+      return;
+    }
+
     try {
       const config = {
         headers: {
@@ -65,7 +88,7 @@ const EventCard = ({ active, data }) => {
         {
           customerEmail: orderDetails.customerEmail,
           customerName: orderDetails.customerName,
-          customerPhoneNumber: orderDetails.customerPhoneNumber, // Added new field
+          customerPhoneNumber: orderDetails.customerPhoneNumber,
           location: orderDetails.location,
           orderDetails: {
             productId: data._id,
@@ -85,7 +108,7 @@ const EventCard = ({ active, data }) => {
       setOrderDetails({
         customerName: "",
         customerEmail: "",
-        customerPhoneNumber: "", // Reset new field
+        customerPhoneNumber: "+92", // Reset to +92
         location: "",
         quantity: 1,
       });
@@ -174,12 +197,17 @@ const EventCard = ({ active, data }) => {
                   <input
                     type="text"
                     name="customerPhoneNumber"
-                    placeholder="Your Phone Number"
+                    placeholder="+923001234567"
                     className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onChange={handleInputChange}
                     value={orderDetails.customerPhoneNumber}
                     required
+                    pattern="^\+923[0-4][0-9]{8}$"
+                    title="Please enter a valid Pakistani phone number (e.g., +923001234567)"
                   />
+                  <p className="text-gray-500 text-sm mt-1">
+                    Format: +923XXXXXXXXXX (e.g., +923001234567)
+                  </p>
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 font-semibold mb-1">Location</label>

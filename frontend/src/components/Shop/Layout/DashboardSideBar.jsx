@@ -55,7 +55,7 @@ const DashboardSideBar = ({ active }) => {
         <Link to="/dashboard-events" className="w-full flex items-center">
           <MdOutlineLocalOffer size={30} color={active === 5 ? "crimson" : "#555"} />
           <h5 className={`hidden 800px:block pl-2 text-[18px] font-[400] ${active === 5 ? "text-[crimson]" : "text-[#555]"}`}>
-            All Events
+            Combo
           </h5>
         </Link>
       </div>
@@ -65,7 +65,7 @@ const DashboardSideBar = ({ active }) => {
         <Link to="/dashboard-create-event" className="w-full flex items-center">
           <VscNewFile size={30} color={active === 6 ? "crimson" : "#555"} />
           <h5 className={`hidden 800px:block pl-2 text-[18px] font-[400] ${active === 6 ? "text-[crimson]" : "text-[#555]"}`}>
-            Create Event
+            Create Combo Deals
           </h5>
         </Link>
       </div>

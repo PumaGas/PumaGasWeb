@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 const CreateProduct = () => {
   const { seller } = useSelector((state) => state.seller);
-  const { success, error } = useSelector((state) => state.products);
+  const { success, error, isLoading } = useSelector((state) => state.products);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -19,9 +19,9 @@ const CreateProduct = () => {
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState([]);
   const [tags, setTags] = useState("");
-  const [originalPrice, setOriginalPrice] = useState();
-  const [discountPrice, setDiscountPrice] = useState();
-  const [stock, setStock] = useState();
+  const [originalPrice, setOriginalPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [stock, setStock] = useState("");
 
   useEffect(() => {
     if (error) {
@@ -32,22 +32,29 @@ const CreateProduct = () => {
       navigate("/dashboard");
       window.location.reload();
     }
-  }, [dispatch, error, success]);
+  }, [dispatch, error, success, navigate]);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
+    const maxSize = 10 * 1024 * 1024; // 10 MB limit
 
-    setImages([]);
+    const validFiles = files.filter((file) => {
+      if (file.size > maxSize) {
+        toast.error(`${file.name} exceeds 10 MB limit!`);
+        return false;
+      }
+      return true;
+    });
 
-    files.forEach((file) => {
+    setImages([]); // Reset images
+    validFiles.forEach((file) => {
       const reader = new FileReader();
-
       reader.onload = () => {
         if (reader.readyState === 2) {
           setImages((old) => [...old, reader.result]);
         }
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // For preview only
     });
   };
 
@@ -62,103 +69,90 @@ const CreateProduct = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const newForm = new FormData();
+    const productData = {
+      name,
+      description,
+      category,
+      subCategory,
+      tags,
+      originalPrice,
+      discountPrice,
+      stock,
+      shopId: seller._id,
+      images,
+    };
 
-    images.forEach((image) => {
-      newForm.set("images", image);
-    });
-    newForm.append("name", name);
-    newForm.append("description", description);
-    newForm.append("category", category);
-    newForm.append("subCategory", subCategory);
-    newForm.append("tags", tags);
-    newForm.append("originalPrice", originalPrice);
-    newForm.append("discountPrice", discountPrice);
-    newForm.append("stock", stock);
-    newForm.append("shopId", seller._id);
-    dispatch(
-      createProduct({
-        name,
-        description,
-        category,
-        subCategory,
-        tags,
-        originalPrice,
-        discountPrice,
-        stock,
-        shopId: seller._id,
-        images,
-      })
-    );
+    dispatch(createProduct(productData));
   };
 
   return (
-    <div className="w-[90%] 800px:w-[50%] bg-white shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
-      <h5 className="text-[30px] font-Poppins text-center">Create Product</h5>
-      {/* create product form */}
-      <form onSubmit={handleSubmit}>
-        <br />
+    <div className="w-[90%] md:w-[60%] lg:w-[50%] mx-auto bg-white shadow-lg rounded-lg p-6 mt-10 max-h-[80vh] overflow-y-auto">
+      <h5 className="text-3xl font-Poppins text-center text-gray-800 mb-6">Create Product</h5>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Name */}
         <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            name="name"
             value={name}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter your product name..."
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            required
           />
         </div>
-        <br />
+
+        {/* Description */}
         <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Description <span className="text-red-500">*</span>
           </label>
           <textarea
             cols="30"
-            required
-            rows="8"
-            type="text"
-            name="description"
+            rows="6"
             value={description}
-            className="mt-2 appearance-none block w-full pt-2 px-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter your product description..."
-          ></textarea>
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            required
+          />
         </div>
-        <br />
+
+        {/* Category */}
         <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Category <span className="text-red-500">*</span>
           </label>
           <select
-            className="w-full mt-2 border h-[35px] rounded-[5px]"
             value={category}
             onChange={handleCategoryChange}
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            required
           >
-            <option value="Choose a category">Choose a category</option>
-            {categoriesData &&
-              categoriesData.map((i) => (
-                <option value={i.title} key={i.title}>
-                  {i.title}
-                </option>
-              ))}
+            <option value="">Choose a category</option>
+            {categoriesData?.map((i) => (
+              <option value={i.title} key={i.title}>
+                {i.title}
+              </option>
+            ))}
           </select>
         </div>
-        <br />
+
+        {/* Subcategory */}
         {subCategories.length > 0 && (
           <div>
-            <label className="pb-2">
+            <label className="block text-sm font-medium text-gray-700">
               Subcategory <span className="text-red-500">*</span>
             </label>
             <select
-              className="w-full mt-2 border h-[35px] rounded-[5px]"
               value={subCategory}
               onChange={(e) => setSubCategory(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+              required
             >
-              <option value="Choose a subcategory">Choose a subcategory</option>
+              <option value="">Choose a subcategory</option>
               {subCategories.map((subCat) => (
                 <option value={subCat.title} key={subCat.id}>
                   {subCat.title}
@@ -167,93 +161,129 @@ const CreateProduct = () => {
             </select>
           </div>
         )}
-        <br />
+
+        {/* Tags */}
         <div>
-          <label className="pb-2">Tags</label>
+          <label className="block text-sm font-medium text-gray-700">Tags</label>
           <input
             type="text"
-            name="tags"
             value={tags}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setTags(e.target.value)}
             placeholder="Enter your product tags..."
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
           />
         </div>
-        <br />
-        <div>
-          <label className="pb-2">Original Price</label>
-          <input
-            type="number"
-            name="price"
-            value={originalPrice}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            onChange={(e) => setOriginalPrice(e.target.value)}
-            placeholder="Enter your product price..."
-          />
+
+        {/* Prices */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Original Price</label>
+            <input
+              type="number"
+              value={originalPrice}
+              onChange={(e) => setOriginalPrice(e.target.value)}
+              placeholder="Enter original price..."
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Discount Price <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={discountPrice}
+              onChange={(e) => setDiscountPrice(e.target.value)}
+              placeholder="Enter discount price..."
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+              required
+            />
+          </div>
         </div>
-        <br />
+
+        {/* Stock */}
         <div>
-          <label className="pb-2">
-            Price (With Discount) <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="price"
-            value={discountPrice}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            onChange={(e) => setDiscountPrice(e.target.value)}
-            placeholder="Enter your product price with discount..."
-          />
-        </div>
-        <br />
-        <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Product Stock <span className="text-red-500">*</span>
           </label>
           <input
             type="number"
-            name="price"
             value={stock}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setStock(e.target.value)}
-            placeholder="Enter your product stock..."
+            placeholder="Enter product stock..."
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            required
           />
         </div>
-        <br />
+
+        {/* Image Upload */}
         <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Upload Images <span className="text-red-500">*</span>
           </label>
-          <input
-            type="file"
-            name=""
-            id="upload"
-            className="hidden"
-            multiple
-            onChange={handleImageChange}
-          />
-          <div className="w-full flex items-center flex-wrap">
+          <div className="mt-2 flex items-center flex-wrap gap-2">
             <label htmlFor="upload">
-              <AiOutlinePlusCircle size={30} className="mt-3" color="#555" />
+              <AiOutlinePlusCircle
+                size={40}
+                className="text-gray-500 hover:text-indigo-500 transition duration-200 cursor-pointer"
+              />
+              <input
+                type="file"
+                id="upload"
+                className="hidden"
+                multiple
+                onChange={handleImageChange}
+                accept="image/*"
+              />
             </label>
-            {images &&
-              images.map((i) => (
-                <img
-                  src={i}
-                  key={i}
-                  alt=""
-                  className="h-[120px] w-[120px] object-cover m-2"
-                />
-              ))}
+            {images.map((i) => (
+              <img
+                src={i}
+                key={i}
+                alt="Preview"
+                className="h-24 w-24 object-cover rounded-lg shadow-md"
+              />
+            ))}
           </div>
-          <br />
-          <div>
-            <input
-              type="submit"
-              value="Create"
-              className="mt-2 cursor-pointer appearance-none text-center block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-2 px-4 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                  />
+                </svg>
+                Creating...
+              </>
+            ) : (
+              "Create Product"
+            )}
+          </button>
         </div>
       </form>
     </div>

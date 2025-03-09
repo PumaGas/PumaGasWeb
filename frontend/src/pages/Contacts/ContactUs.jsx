@@ -4,8 +4,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { server } from "../../server";
 import styles from "../../styles/styles";
-import Header from "../../components/Layout/Header"; // Adjust path if needed
-import Footer from "../../components/Layout/Footer"; // Already included
+import Header from "../../components/Layout/Header";
+import Footer from "../../components/Layout/Footer";
 
 const ContactUs = () => {
   const [contactData, setContactData] = useState({
@@ -20,7 +20,9 @@ const ContactUs = () => {
   useEffect(() => {
     const fetchSellerPhone = async () => {
       try {
-        const response = await axios.get(`${server}/shop/get-first-seller-phone`);
+        const response = await axios.get(`${server}/shop/get-first-seller-phone`, {
+          withCredentials: true, // Include credentials (cookies)
+        });
         if (response.data.success && response.data.phoneNumber) {
           setSellerPhone(response.data.phoneNumber);
         } else {
@@ -38,16 +40,34 @@ const ContactUs = () => {
     setContactData({ ...contactData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Contact Form Submitted:", contactData);
-    toast.success("Your message has been sent successfully!");
-    setContactData({
-      name: "",
-      email: "",
-      phoneNumber: "",
-      message: "",
-    });
+    try {
+      const response = await axios.post(
+        `${server}/send-email`,
+        contactData,
+        {
+          headers: {
+            "Content-Type": "application/json", // Explicitly set Content-Type
+          },
+          withCredentials: true, // Include credentials (cookies)
+        }
+      );
+      if (response.data.success) {
+        toast.success("Your message has been sent successfully!");
+        setContactData({
+          name: "",
+          email: "",
+          phoneNumber: "",
+          message: "",
+        });
+      } else {
+        toast.error("Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast.error("An error occurred. Please try again later.");
+    }
   };
 
   const handleWhatsAppMessage = () => {
@@ -57,14 +77,13 @@ const ContactUs = () => {
     }
     const message = `Hello, I have a query from the Contact Us page. Name: ${contactData.name},\n Email: ${contactData.email},\n Phone: ${contactData.phoneNumber},\n ${contactData.message}`;
     const whatsappUrl = `https://wa.me/+92${sellerPhone}?text=${encodeURIComponent(message)}`;
-    console.log("WhatsApp URL:", whatsappUrl); // Debug log
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Header */}
-      <Header activeHeading={7} /> {/* Adjust activeHeading based on your navbar; e.g., 5 for "Contact Us" */}
+      <Header activeHeading={6} />
 
       {/* Main Content */}
       <div className={`${styles.section} py-12 px-4 md:px-8 flex-grow`}>
@@ -155,7 +174,8 @@ const ContactUs = () => {
             <p className="mt-2">
               Phone: {sellerPhone ? sellerPhone : "Loading..."}
             </p>
-            <p>Email: support@example.com</p>
+            <p>Factory Phone: 055-4802131 , 055-4213381</p>
+            <p>Email: pumagas30@gmail.com</p>
           </div>
         </div>
       </div>

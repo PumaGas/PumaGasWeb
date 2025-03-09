@@ -5,7 +5,6 @@ export const navItems = [
   { title: "Best Selling", url: "/best-selling" },
   { title: "Products", url: "/products" },
   { title: "Combo", url: "/events" },
-  { title: "FAQ", url: "/faq" },
   { title: "Contact Us", url: "/contact" },
 ];
 
@@ -65,7 +64,7 @@ export const categoriesData = [
   {
     id: 1,
     title: "Air Coolers",
-    image_Url: "https://i.postimg.cc/vHyptg69/aircooler.jpg", // Placeholder URL; you can replace with actual URLs
+    image_Url: "https://i.postimg.cc/B6DNFfZG/Air-Coolers-icon.jpg", // Placeholder URL; you can replace with actual URLs
     subcategories: [
       { id: 1, title: "Air Coolers", description: "" },
       { id: 2, title: "AC/DC Cooler", description: "" },
@@ -75,7 +74,7 @@ export const categoriesData = [
   {
     id: 2,
     title: "Gas Stove",
-    image_Url: "https://i.postimg.cc/T3LqyQYc/Gas-Stove.jpg", // Placeholder URL
+    image_Url: "https://i.postimg.cc/1XQBc74V/cooking-stove.jpg", // Placeholder URL
     subcategories: [
       { id: 1, title: "Automatic", description: "" },
       { id: 2, title: "Simple", description: "" },
@@ -86,7 +85,7 @@ export const categoriesData = [
   {
     id: 3,
     title: "Gas Hob (Built-in)",
-    image_Url: "https://i.postimg.cc/X7Dk7t3J/Gas-Hob-Built-in.jpg", // Placeholder URL
+    image_Url: "https://i.postimg.cc/Hn92S07Z/Gas-Hob-Built-in-icon.jpg", // Placeholder URL
     subcategories: [
       { id: 1, title: "Gas Hob", description: "" },
       { id: 2, title: "Imported Gas Hob", description: "" },
@@ -97,7 +96,7 @@ export const categoriesData = [
  {
     id: 4,
     title: "Cooking Range",
-    image_Url: "https://i.postimg.cc/cJ3mzhpJ/Cooking-Range.jpg", // Placeholder URL
+    image_Url: "https://i.postimg.cc/vmC3DZsz/cooking-range.jpg", // Placeholder URL
     subcategories: [
       { id: 1, title: "Gas Cooking Range", description: "" },
       { id: 2, title: "Electric + Gas Cooking Range", description: "" },
@@ -107,7 +106,7 @@ export const categoriesData = [
   {
     id: 5,
     title: "Hood",
-    image_Url: "https://i.postimg.cc/76VgvWmq/Hood.png", // Placeholder URL
+    image_Url: "https://i.postimg.cc/DwZggXf6/Hoodicon.jpg", // Placeholder URL
     subcategories: [
       { id: 1, title: "Manual", description: "" },
       { id: 2, title: "Touch", description: "" },
@@ -119,7 +118,7 @@ export const categoriesData = [
   {
     id: 6,
     title: "Gas Geyser",
-    image_Url: "https://i.postimg.cc/MKGYwqCN/Gas-Geyser.jpg", // Placeholder URL
+    image_Url: "https://i.postimg.cc/rw0hT46m/gyser-icon.webp", // Placeholder URL
     subcategories: [
       { id: 1, title: "Gas Geyser", description: "" },
       { id: 2, title: "Electric + Gas Geyser", description: "" },
@@ -131,7 +130,7 @@ export const categoriesData = [
   {
     id: 7,
     title: "Washing Machine",
-    image_Url: "https://i.postimg.cc/sgDqbkmg/Washing-Machine.webp", // Placeholder URL
+    image_Url: "https://i.postimg.cc/k5RyrPbt/washing-machine.png", // Placeholder URL
     subcategories: [
       { id: 1, title: "Spinner", description: "" },
       { id: 2, title: "Washer", description: "" },
@@ -142,7 +141,7 @@ export const categoriesData = [
   {
     id: 8,
     title: "Gas Cylinder",
-    image_Url: "https://i.postimg.cc/y6jT2kb0/Gas-Cylinder.jpg", // Placeholder URL
+    image_Url: "https://i.postimg.cc/7P3mY4Q3/gas-cylender.webp", // Placeholder URL
     subcategories: [
       { id: 1, title: "5kg", description: "" },
       { id: 2, title: "8kg", description: "" },
@@ -154,7 +153,7 @@ export const categoriesData = [
   {
     id: 9,
     title: "Fan",
-    image_Url: "https://i.postimg.cc/j2x4LbLW/Fan.webp", // Placeholder URL
+    image_Url: "https://i.postimg.cc/43YWJhry/fan.png", // Placeholder URL
     subcategories: [
       { id: 1, title: "Fan", description: "" },
       { id: 2, title: "AC/DC Fan", description: "" },
@@ -170,7 +169,7 @@ export const categoriesData = [
   {
     id: 10,
     title: "Heaters",
-    image_Url: "https://i.postimg.cc/SKc6ds92/Heaters.jpg", // Placeholder URL
+    image_Url: "https://i.postimg.cc/7YX90V4b/Heater.png", // Placeholder URL
     subcategories: [
       { id: 1, title: "Gas Heaters", description: "" },
       { id: 2, title: "Electric + Gas Heaters", description: "" },
@@ -180,7 +179,7 @@ export const categoriesData = [
   {
     id: 11,
     title: "Water Cooler",
-    image_Url: "https://i.postimg.cc/T1fCgbH3/Water-Cooler.webp", // Placeholder URL
+    image_Url: "https://i.postimg.cc/KYtJky8h/water-cooler-icon.webp", // Placeholder URL
     subcategories: [
       { id: 1, title: "Water Cooler", description: "" },
     ],
@@ -188,7 +187,7 @@ export const categoriesData = [
   {
     id: 12,
     title: "Water Dispensers",
-    image_Url: "https://i.postimg.cc/ydFLDjjG/Water-Dispensers.jpg", // Placeholder URL
+    image_Url: "https://i.postimg.cc/Y93RRfFX/water-despenser.png", // Placeholder URL
     subcategories: [
       { id: 1, title: "Water Dispensers", description: "" },
     ],
@@ -219,6 +218,9 @@ export const footerSupportLinks = [
   { name: "FAQ", link: "/faq" },
   { name: "Contact Us", link: "/contact" },
 ];
-export const MissionImg = "https://i.postimg.cc/3wJ1vJ1V/mission-image.jpg";
-export const ProductsImg = "https://i.postimg.cc/3wJ1vJ1V/mission-image.jpg";
-export const ImgUrl="https://i.postimg.cc/3xs2fqf7/puma.jpg";
+export const MissionImg = "https://i.postimg.cc/wMqfYbH8/puma.jpg";
+export const ProductsImg = "https://i.postimg.cc/GpDSFyzN/group-photo.jpg";
+export const ImgUrl="https://i.postimg.cc/wMqfYbH8/puma.jpg";
+export const BureauCer="https://i.postimg.cc/FRgWqXMV/certification.jpg";
+export const PakStand="https://i.postimg.cc/cHNkXLbJ/paksitan-standard.jpg";
+export const Swisso="https://i.postimg.cc/FzTPrgsf/swisso.jpg";

@@ -15,7 +15,7 @@ const Hero = () => {
       try {
         const response = await axios.get(`${server}/banner/get-home-banner`);
         if (response.data.success) {
-          setImages(response.data.banners); // ✅ Corrected API response handling
+          setImages(response.data.banners); // Set banners from API
           console.log("Banners:", response.data.banners);
         }
       } catch (error) {
@@ -37,38 +37,47 @@ const Hero = () => {
     arrows: false,
   };
 
+  // Filter out null or empty banners
+  const validImages = images.filter((image) => image !== null && image !== "");
+
+  // If no valid banners, return null to remove the section
+  if (validImages.length === 0) {
+    return null;
+  }
+
   return (
     <div className="relative w-full min-h-[70vh] 800px:min-h-[80vh]">
-      {images.length > 1 ? (
-        <Slider {...settings} className="w-full h-full">
-          {images.map((image, index) => (
-            <div key={index} className="relative w-full h-[70vh] 800px:h-[80vh]">
+      {validImages.length === 1 ? (
+        <div className="relative w-full h-[70vh] 800px:h-[80vh] overflow-hidden">
+          <img
+            src={validImages[0]}
+            alt="Banner"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Uncomment if you want the overlay content */}
+          {/* <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
+            <HeroContent />
+          </div> */}
+        </div>
+      ) : (
+        <Slider {...settings} className="w-full h-[70vh] 800px:h-[80vh]">
+          {validImages.map((image, index) => (
+            <div
+              key={index}
+              className="relative w-full h-[70vh] 800px:h-[80vh] overflow-hidden"
+            >
               <img
                 src={image}
                 alt={`Slide ${index + 1}`}
-                className="absolute top-0 left-0 w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
-              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
+              {/* Uncomment if you want the overlay content */}
+              {/* <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
                 <HeroContent />
-              </div>
+              </div> */}
             </div>
           ))}
         </Slider>
-      ) : images.length === 1 ? (
-        <div className="relative w-full h-[70vh] 800px:h-[80vh]">
-          <img
-            src={images[0]}
-            alt="Banner"
-            className="absolute top-0 left-0 w-full h-full object-cover"
-          />
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
-            <HeroContent />
-          </div>
-        </div>
-      ) : (
-        <div className="relative w-full h-[70vh] 800px:h-[80vh] flex items-center justify-center bg-gray-200">
-          <h2 className="text-gray-500 text-2xl">No banners available</h2>
-        </div>
       )}
     </div>
   );

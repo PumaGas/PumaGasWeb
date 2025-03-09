@@ -6,7 +6,8 @@ const bodyParser = require("body-parser");
 // Increase payload size limit
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-
+// app.use(express.json({ limit: "10mb" }));
+// app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // Handling uncaught Exception
 process.on("uncaughtException", (err) => {
@@ -28,7 +29,7 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  chunk_size: 6000000 // 6MB chunk size for large file uploads
+  chunk_size: 10 * 1024 * 1024// 6MB chunk size for large file uploads
 })
 
 

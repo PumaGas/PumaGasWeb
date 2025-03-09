@@ -58,30 +58,24 @@ export const getAllEventsShop = (id) => async (dispatch) => {
 // delete event of a shop
 export const deleteEvent = (id) => async (dispatch) => {
   try {
-    dispatch({
-      type: "deleteeventRequest",
+    dispatch({ type: "deleteeventRequest" });
+
+    const { data } = await axios.delete(`${server}/event/delete-shop-event/${id}`, {
+      withCredentials: true, // If authentication is required
     });
 
-    const { data } = await axios.delete(
-      `${server}/event/delete-shop-event/${id}`,
-      {
-        withCredentials: true,
-      }
-    );
+    dispatch({ type: "deleteeventSuccess", payload: id });
 
-    dispatch({
-      type: "deleteeventSuccess",
-      payload: data.message,
-    });
+    return { success: true, message: data.message }; // ✅ Return response for UI handling
   } catch (error) {
-    dispatch({
-      type: "deleteeventFailed",
-      payload: error.response && error.response.data && error.response.data.message
-        ? error.response.data.message
-        : error.message,
-    });
+    const errorMessage = error.response?.data?.message || error.message;
+    
+    dispatch({ type: "deleteeventFailed", payload: errorMessage });
+
+    return { success: false, message: errorMessage }; // ✅ Return error response for UI handling
   }
 };
+
 
 // get all events
 export const getAllEvents = () => async (dispatch) => {

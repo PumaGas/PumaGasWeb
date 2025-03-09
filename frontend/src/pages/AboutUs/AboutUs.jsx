@@ -1,4 +1,3 @@
-// AboutUs.js
 import React, { useState, useEffect } from "react";
 import { AiOutlineWhatsApp } from "react-icons/ai";
 import { toast } from "react-toastify";
@@ -6,10 +5,6 @@ import axios from "axios";
 import { server } from "../../server";
 import Header from "../../components/Layout/Header"; // Adjust path if needed
 import Footer from "../../components/Layout/Footer"; // Adjust path if needed
-
-// Import your images here (adjust paths based on your project structure)
-// import missionImage from "../../assets/images/mission-image.jpg"; // Example path
-// import productsImage from "../../assets/images/products-image.jpg"; // Example path
 import { MissionImg } from "../../static/data";
 import { ProductsImg } from "../../static/data";
 
@@ -46,7 +41,7 @@ const AboutUs = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex flex-col">
       {/* Header */}
-      <Header  />
+      <Header />
 
       {/* Main Content */}
       <div className="w-full py-16 px-4 sm:px-6 lg:px-8 flex-grow">
@@ -58,7 +53,7 @@ const AboutUs = () => {
           {/* Intro Section */}
           <div className="bg-white rounded-xl shadow-xl p-8 mb-12 border border-gray-200">
             <p className="text-center text-gray-600 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
-              At Puma Electric & Gas Appliances, we are committed to delivering high-quality gas home appliances that cater to the needs of modern households. With over 30 years of industry experience, we have established ourselves as a trusted name, known for our reliability, innovation, and customer satisfaction.
+              At Puma Electric & Gas Appliances, we are committed to delivering high-quality gas home appliances that cater to the needs of modern households. With over 40 years of industry experience, we have established ourselves as a trusted name, known for our reliability, innovation, and customer satisfaction.
             </p>
           </div>
 
@@ -79,12 +74,14 @@ const AboutUs = () => {
                   <li><span className="font-semibold">Strict Quality Control</span> – Implementing rigorous testing to meet industry benchmarks.</li>
                 </ul>
               </div>
-              <div className="hidden lg:block">
-                <img
-                  src={MissionImg} // Replace with your actual mission-related image
-                  alt="Our Mission"
-                  className="w-full h-64 object-cover rounded-lg shadow-md"
-                />
+              <div className="w-full">
+                <div className="relative w-full h-64 lg:h-80 rounded-lg shadow-md overflow-hidden">
+                  <img
+                    src={MissionImg}
+                    alt="Our Mission"
+                    className="w-full h-full object-contain" // Changed to object-contain
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -92,12 +89,14 @@ const AboutUs = () => {
           {/* Our Products */}
           <section className="mb-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              <div className="hidden lg:block">
-                <img
-                  src={ProductsImg} // Replace with your actual products image
-                  alt="Our Products"
-                  className="w-full h-64 object-cover rounded-lg shadow-md"
-                />
+              <div className="w-full order-1 lg:order-none">
+                <div className="relative w-full h-64 lg:h-80 rounded-lg shadow-md overflow-hidden">
+                  <img
+                    src={ProductsImg}
+                    alt="Our Products"
+                    className="w-full h-full object-contain" // Changed to object-contain
+                  />
+                </div>
               </div>
               <div>
                 <h2 className="text-3xl md:text-4xl font-semibold text-gray-800 mb-6">
@@ -140,10 +139,10 @@ const AboutUs = () => {
               Address: Puma Gas Appliances, Hafizabad Road, Gujranwala, Punjab, Pakistan
             </p>
             <p className="text-lg mb-4">
-              Phone: +92-55-4213387
+              Phone: 0307-7255575
             </p>
             <p className="text-lg mb-6">
-              Fax: +92-55-4213387
+              Fax: 055-4802131 , 055-4213381
             </p>
             <button
               onClick={handleWhatsAppClick}

@@ -19,10 +19,25 @@ const AllEvents = () => {
     dispatch(getAllEventsShop(seller._id));
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    dispatch(deleteEvent(id));
-    window.location.reload();
-  }
+  const handleDelete = async (id) => {
+    try {
+      console.log("Deleting event with ID:", id);
+      
+      const result = await dispatch(deleteEvent(id)); // Wait for action to complete
+  
+      if (result?.success) {
+        console.log("✅ Event deleted successfully!");
+        window.location.reload(); // Reload only if deletion is successful
+      } else {
+        console.error("❌ Event deletion failed:", result?.message);
+        alert(`Deletion failed: ${result?.message}`);
+      }
+    } catch (error) {
+      console.error("❌ Error deleting event:", error);
+    }
+  };
+  
+  
 
   const columns = [
     { field: "id", headerName: "Product Id", minWidth: 150, flex: 0.7 },
@@ -102,7 +117,7 @@ const AllEvents = () => {
       row.push({
         id: item._id,
         name: item.name,
-        price: "US$ " + item.discountPrice,
+        price: "Rs " + item.discountPrice,
         Stock: item.stock,
         sold: item.sold_out,
       });

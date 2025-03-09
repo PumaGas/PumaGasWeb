@@ -21,23 +21,20 @@ const UpdateHomeBanner = () => {
     try {
       const response = await axios.get(`${server}/banner/get-home-banner`);
 
-      // ✅ Corrected API response handling
       if (response.data.success && Array.isArray(response.data.banners)) {
         const fetchedBanners = response.data.banners;
-        setExistingBanners([
+        // Map fetched banners to state, preserving empty or null as ""
+        const paddedBanners = [
           fetchedBanners[0] || "",
           fetchedBanners[1] || "",
           fetchedBanners[2] || "",
-        ]);
-        setNewBanners([
-          fetchedBanners[0] || "",
-          fetchedBanners[1] || "",
-          fetchedBanners[2] || "",
-        ]);
+        ];
+        setExistingBanners(paddedBanners);
+        setNewBanners(paddedBanners);
       } else {
         console.error("API response does not contain valid banners.");
         toast.error("No banners found.");
-        setExistingBanners(["", "", ""]); // Fallback to empty banners
+        setExistingBanners(["", "", ""]);
         setNewBanners(["", "", ""]);
       }
     } catch (error) {
@@ -49,7 +46,8 @@ const UpdateHomeBanner = () => {
   // Handle input change for new banners
   const handleBannerChange = (index, value) => {
     const updatedBanners = [...newBanners];
-    updatedBanners[index] = value;
+    // Store empty string if input is cleared, allowing null/empty to persist
+    updatedBanners[index] = value || ""; 
     setNewBanners(updatedBanners);
   };
 
@@ -57,23 +55,24 @@ const UpdateHomeBanner = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Remove empty entries before sending
-    const filteredBanners = newBanners.filter((banner) => banner.trim() !== "");
+    // Use newBanners directly, including empty strings
+    const bannersToSubmit = newBanners;
 
-    // Ensure at least one banner exists
-    if (filteredBanners.length === 0) {
-      return toast.error("At least one banner is required.");
+    // Check if all banners are empty
+    if (bannersToSubmit.every((banner) => banner.trim() === "")) {
+      return toast.error("At least one banner URL is required.");
     }
 
     try {
+      console.log("Submitting banners:", bannersToSubmit);
       const response = await axios.post(
-        `${server}/banner/update-home-banner`, // ✅ Correct API URL
-        { images: filteredBanners }, // ✅ Send JSON (not FormData)
+        `${server}/banner/update-home-banner`,
+        { images: bannersToSubmit }, // Send all values, including empty strings
         { headers: { "Content-Type": "application/json" }, withCredentials: true }
       );
 
       toast.success(response.data.message || "Home banner updated successfully!");
-      navigate("/dashboard");
+      // navigate("/dashboard");
       window.location.reload();
     } catch (error) {
       console.error("Error updating banner:", error);
@@ -111,7 +110,10 @@ const UpdateHomeBanner = () => {
                       className="h-[150px] w-full object-cover rounded-md shadow-md"
                     />
                   ) : (
-                    <div key={index} className="h-[150px] w-full bg-gray-200 rounded-md flex items-center justify-center text-gray-500">
+                    <div
+                      key={index}
+                      className="h-[150px] w-full bg-gray-200 rounded-md flex items-center justify-center text-gray-500"
+                    >
                       No Banner
                     </div>
                   )

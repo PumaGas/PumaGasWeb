@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import Wishlist from "../Wishlist/Wishlist";
 import { RxCross1 } from "react-icons/rx";
 import { ImgUrl } from "../../static/data";
+
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { isSeller } = useSelector((state) => state.seller);
@@ -58,15 +59,11 @@ const Header = ({ activeHeading }) => {
             product.name.toLowerCase().includes(term.toLowerCase())
           )
         : [];
-      const combinedProducts = [
-        ...recommendedProducts,
-        ...filteredProducts.filter(
-          (product) => !recommendedProducts.some((rec) => rec._id === product._id)
-        ),
-      ];
 
-      console.log("Combined products:", combinedProducts);
-      setSearchData(combinedProducts);
+      setSearchData({
+        filtered: filteredProducts,
+        recommended: recommendedProducts,
+      });
     }, 300),
     [allProducts]
   );
@@ -78,9 +75,8 @@ const Header = ({ activeHeading }) => {
   };
 
   const onSearchFocus = () => {
-    if (!searchTerm) {
-      handleSearchChange("");
-    }
+    // Always show recommended products on focus
+    handleSearchChange(searchTerm);
   };
 
   const clearSearch = () => {
@@ -104,6 +100,27 @@ const Header = ({ activeHeading }) => {
       setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
     }
   };
+
+  const renderSearchItem = (item, index) => (
+    <Link
+      key={index}
+      to={`/product/${item._id}`}
+      onClick={() => console.log("Navigating to:", `/product/${item._id}`)}
+      className="block"
+    >
+      <div className="w-full flex items-center py-2 border-b hover:bg-gray-100 transition cursor-pointer">
+        <img
+          src={`${item.images && item.images[0]?.url ? item.images[0].url : "default-image.jpg"}`}
+          alt={item.name}
+          className="w-[40px] h-[40px] mr-[10px] object-cover rounded"
+        />
+        <div className="flex items-center w-full">
+          <h1 className="text-sm">{item.name}</h1>
+          {item.recommended }
+        </div>
+      </div>
+    </Link>
+  );
 
   return (
     <>
@@ -132,40 +149,32 @@ const Header = ({ activeHeading }) => {
               size={30}
               className="absolute right-2 top-1.5 cursor-pointer"
             />
-            {searchData && searchData.length !== 0 && (
+            {searchData && (
               <div className="absolute min-h-[30vh] max-h-[50vh] overflow-y-auto bg-white shadow-lg z-[10] p-4 w-full mt-1 rounded-md border border-gray-200">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-semibold">Search Results</span>
+                  <span className="text-sm font-semibold">Search Result</span>
                   <AiOutlineClose
                     size={20}
                     className="cursor-pointer text-gray-500 hover:text-gray-700"
                     onClick={clearSearch}
                   />
                 </div>
-                {searchData.map((i, index) => (
-                  <Link
-                    key={index}
-                    to={`/product/${i._id}`}
-                    onClick={() => console.log("Navigating to:", `/product/${i._id}`)}
-                    className="block"
-                  >
-                    <div className="w-full flex items-center py-2 border-b hover:bg-gray-100 transition cursor-pointer">
-                      <img
-                        src={`${i.images && i.images[0]?.url ? i.images[0].url : "default-image.jpg"}`}
-                        alt={i.name}
-                        className="w-[40px] h-[40px] mr-[10px] object-cover rounded"
-                      />
-                      <div className="flex items-center">
-                        <h1 className="text-sm">{i.name}</h1>
-                        {i.recommended && (
-                          <span className="ml-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded">
-                            Recommended
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+
+                {/* Search Results Section */}
+                {searchTerm && searchData.filtered.length > 0 && (
+                  <div className="mb-4">
+                    {/* <h3 className="text-sm font-semibold text-gray-700 mb-2">Search Results</h3> */}
+                    {searchData.filtered.map((item, index) => renderSearchItem(item, index))}
+                  </div>
+                )}
+
+                {/* Recommended Products Section */}
+                {searchData.recommended.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Top Search</h3>
+                    {searchData.recommended.map((item, index) => renderSearchItem(item, index))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -296,40 +305,32 @@ const Header = ({ activeHeading }) => {
               size={24}
               className="absolute right-2 top-2.5 cursor-pointer text-gray-600 hover:text-blue-500 transition-colors duration-200"
             />
-            {searchData && searchData.length !== 0 && (
+            {searchData && (
               <div className="absolute top-[45px] left-0 min-h-[20vh] max-h-[40vh] overflow-y-auto bg-white shadow-xl z-[10] p-4 w-full rounded-md border border-gray-200 transition-all duration-300 ease-in-out">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-semibold text-gray-800">Search Results</span>
+                  <span className="text-sm font-semibold text-gray-800">Search</span>
                   <AiOutlineClose
                     size={18}
                     className="cursor-pointer text-gray-500 hover:text-gray-700 transition-colors duration-200"
                     onClick={clearSearch}
                   />
                 </div>
-                {searchData.map((i, index) => (
-                  <Link
-                    key={index}
-                    to={`/product/${i._id}`}
-                    onClick={() => console.log("Navigating to:", `/product/${i._id}`)}
-                    className="block"
-                  >
-                    <div className="w-full flex items-center py-2 border-b hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
-                      <img
-                        src={`${i.images && i.images[0]?.url ? i.images[0].url : "default-image.jpg"}`}
-                        alt={i.name}
-                        className="w-[30px] h-[30px] mr-[10px] object-cover rounded"
-                      />
-                      <div className="flex items-center">
-                        <h1 className="text-xs text-gray-800">{i.name}</h1>
-                        {i.recommended && (
-                          <span className="ml-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded">
-                            Recommended
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+
+                {/* Search Results Section */}
+                {searchTerm && searchData.filtered.length > 0 && (
+                  <div className="mb-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Search Results</h3>
+                    {searchData.filtered.map((item, index) => renderSearchItem(item, index))}
+                  </div>
+                )}
+
+                {/* Recommended Products Section */}
+                {searchData.recommended.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Recommended Products</h3>
+                    {searchData.recommended.map((item, index) => renderSearchItem(item, index))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -354,7 +355,7 @@ const Header = ({ activeHeading }) => {
                 className="relative cursor-pointer hover:bg-gray-200 p-2 rounded-full transition-colors duration-200"
                 onClick={() => {
                   setOpenWishlist(true);
-                  setOpen(false); // Close sidebar when opening wishlist
+                  setOpen(false);
                 }}
               >
                 <AiOutlineHeart size={36} className="text-red-500" />

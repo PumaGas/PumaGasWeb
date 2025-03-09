@@ -1,15 +1,14 @@
 import { Button } from "@material-ui/core";
 import { DataGrid } from "@material-ui/data-grid";
 import React, { useEffect } from "react";
-import { AiOutlineDelete, AiOutlineEye, AiOutlineStar, AiFillStar } from "react-icons/ai"; // Added star icons
+import { AiOutlineDelete, AiOutlineEye, AiOutlineStar, AiFillStar } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { getAllProductsShop } from "../../redux/actions/product";
+import { getAllProductsShop, deleteProduct } from "../../redux/actions/product"; // Import deleteProduct
 import Loader from "../Layout/Loader";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { server } from "../../server";
-import { toast } from "react-toastify";
-
 const AllProducts = () => {
   const { products, isLoading } = useSelector((state) => state.products);
   const { seller } = useSelector((state) => state.seller);
@@ -44,8 +43,10 @@ const AllProducts = () => {
       await axios.put(`${server}/product/set-stock-zero/${id}`, {}, { withCredentials: true });
       dispatch(getAllProductsShop(seller._id));
       console.log(`Drop the Product with id: ${id}`);
+      toast.success("Product stock set to zero!");
     } catch (error) {
       console.error("Error dropping the product:", error);
+      toast.error(error.response?.data?.message || "Failed to drop product.");
     }
   };
 
@@ -61,6 +62,20 @@ const AllProducts = () => {
     } catch (error) {
       console.error("Error toggling recommended status:", error);
       toast.error(error.response?.data?.message || "Failed to update recommended status.");
+    }
+  };
+
+  const handleDeleteProduct = (id) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      dispatch(deleteProduct(id))
+        .then(() => {
+          toast.success("Product deleted successfully!");
+          dispatch(getAllProductsShop(seller._id)); // Refresh the product list
+        })
+        .catch((error) => {
+          console.error("Error deleting product:", error);
+          toast.error("Failed to delete product.");
+        });
     }
   };
 
@@ -133,6 +148,21 @@ const AllProducts = () => {
         </div>
       ),
     },
+    {
+      field: "delete",
+      headerName: "",
+      flex: 0.8,
+      minWidth: 100,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          onClick={() => handleDeleteProduct(params.id)}
+          title="Delete Product"
+        >
+          <AiOutlineDelete size={20} color="#FF0000" />
+        </Button>
+      ),
+    },
   ];
 
   const row = [];
@@ -144,7 +174,7 @@ const AllProducts = () => {
         price: "Rs " + item.discountPrice,
         Stock: item.stock,
         sold: item?.sold_out,
-        recommended: item.recommended, // Added recommended field
+        recommended: item.recommended,
       });
     });
 

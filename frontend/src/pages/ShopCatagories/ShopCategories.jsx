@@ -14,7 +14,7 @@ const ShopCategories = () => {
       <Header activeHeading={2} />
       <div className={`${styles.section} py-8 flex-grow`}>
         <h1 className="text-3xl font-bold text-center mb-8 text-[#000000b7]">
-          Shop by Category
+          Top Category
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {Array.isArray(categoriesData) ? (
@@ -25,9 +25,9 @@ const ShopCategories = () => {
               >
                 <div className="relative">
                   <img
-                    src={category.image_Url || {ImgUrl}}
+                    src={category.image_Url || ImgUrl} // Fixed fallback syntax
                     alt={category.title}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-contain" // Changed to object-contain
                   />
                   <button
                     onClick={() => setSelectedCategory(category)}

@@ -21,7 +21,6 @@ import { ImgUrl } from "../../static/data";
 const ProductDetails = ({ data }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
-  const seller = useSelector((state) => state.seller);
   const { user, isAuthenticated } = useSelector((state) => state.user);
   const { products } = useSelector((state) => state.products);
   const [count, setCount] = useState(1);
@@ -31,7 +30,7 @@ const ProductDetails = ({ data }) => {
   const [orderData, setOrderData] = useState({
     customerName: "",
     customerEmail: "",
-    customerPhoneNumber: "", // Added new field
+    customerPhoneNumber: "+92", // Prefill with +92
     location: "",
     quantity: 1,
   });
@@ -122,40 +121,78 @@ const ProductDetails = ({ data }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setOrderData({ ...orderData, [name]: value });
+    if (name === "customerPhoneNumber") {
+      const cleanedValue = value.replace(/[^0-9+]/g, ""); // Remove non-numeric except +
+      if (
+        cleanedValue === "" || // Allow empty input
+        (cleanedValue.startsWith("+92") && cleanedValue.length <= 13) // +92 + 10 digits = 13 chars
+      ) {
+        setOrderData({ ...orderData, [name]: cleanedValue });
+      }
+    } else {
+      setOrderData({ ...orderData, [name]: value });
+    }
+  };
+
+  const validatePhoneNumber = (phoneNumber) => {
+    const phoneRegex = /^\+923[0-4][0-9]{8}$/; // Matches +923XXXXXXXXXX (10 digits after +923)
+    return phoneRegex.test(phoneNumber);
   };
 
   const handleOrderSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(`${server}/order/create-order`, {
-        customerEmail: orderData.customerEmail,
-        customerName: orderData.customerName,
-        customerPhoneNumber: orderData.customerPhoneNumber, // Added new field
-        location: orderData.location,
-        orderDetails: {
-          productId: data._id,
-          productName: data.name,
-          quantity: parseInt(orderData.quantity, 10),
-          price: data.originalPrice,
-        },
-        orderStock: data.stock || 10,
-        sellerId: data.shop._id,
-      });
 
-      console.log("Order Placed:", response.data.order);
+    // Validate phone number
+    if (!validatePhoneNumber(orderData.customerPhoneNumber)) {
+      toast.error("Please enter a valid Pakistani phone number (e.g., +923001234567)");
+      return;
+    }
+
+    const payload = {
+      customerEmail: orderData.customerEmail,
+      customerName: orderData.customerName,
+      customerPhoneNumber: orderData.customerPhoneNumber,
+      location: orderData.location,
+      orderDetails: {
+        productId: data._id,
+        productName: data.name,
+        quantity: parseInt(orderData.quantity, 10),
+        price: data.originalPrice,
+      },
+      orderStock: data.stock || 10,
+      sellerId: data.shop._id,
+    };
+
+    console.log("Order Payload:", payload);
+
+    try {
+      const response = await axios.post(
+        `${server}/order/create-order`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log("Order Response:", response.data);
       toast.success("Order placed successfully! Check your email.");
       setShowOrderForm(false);
       setOrderData({
         customerName: "",
         customerEmail: "",
-        customerPhoneNumber: "", // Reset new field
+        customerPhoneNumber: "+92", // Reset to +92
         location: "",
         quantity: 1,
       });
     } catch (error) {
-      console.error("Order Error:", error.response?.data?.message || error.message);
-      toast.error("Failed to place order: " + (error.response?.data?.message || "Server error"));
+      console.error("Order Error:", error.response?.data || error.message);
+      toast.error(
+        "Failed to place order: " +
+          (error.response?.data?.message || "Server error")
+      );
     }
   };
 
@@ -226,7 +263,6 @@ const ProductDetails = ({ data }) => {
                   </div>
                 </div>
 
-                {/* Buttons in Same Line with Icon */}
                 <div className="flex gap-4 mt-6">
                   <div
                     className={`${styles.button} !h-11 rounded flex items-center`}
@@ -249,11 +285,7 @@ const ProductDetails = ({ data }) => {
                 <div className="flex items-center pt-8">
                   <Link to={`/shop/preview/${data?.shop._id}`}>
                     <img
-                      src={
-                        data?.shop?.avatar?.url
-                          ? data.shop.avatar.url
-                          :{ImgUrl}
-                      }
+                      src={data?.shop?.avatar?.url ? data.shop.avatar.url : ImgUrl}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />
@@ -305,12 +337,17 @@ const ProductDetails = ({ data }) => {
                     <input
                       type="text"
                       name="customerPhoneNumber"
-                      placeholder="Your Phone Number"
+                      placeholder="+923001234567"
                       value={orderData.customerPhoneNumber}
                       onChange={handleInputChange}
                       className="w-full p-2 border rounded"
                       required
+                      pattern="^\+923[0-4][0-9]{8}$"
+                      title="Please enter a valid Pakistani phone number (e.g., +923001234567)"
                     />
+                    <p className="text-gray-500 text-sm mt-1">
+                      Format: +923XXXXXXXXXX (e.g., +923001234567)
+                    </p>
                   </div>
                   <div className="mb-4">
                     <label className="block text-gray-700">Quantity</label>

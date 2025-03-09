@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { server } from "../../server";
 import DashboardHeader from "../../components/Shop/Layout/DashboardHeader";
 import DashboardSideBar from "../../components/Shop/Layout/DashboardSideBar";
-import { categoriesData } from "../../static/data"; // Import categories data
+import { categoriesData } from "../../static/data";
 
 const UpdateCategoryBanner = () => {
   const navigate = useNavigate();
@@ -13,17 +13,17 @@ const UpdateCategoryBanner = () => {
   // Form states
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
-  const [subCategories, setSubCategories] = useState([]); // Stores subcategories dynamically
-  const [existingBanners, setExistingBanners] = useState(["", "", ""]); // Stores fetched banners
-  const [newBanners, setNewBanners] = useState(["", "", ""]); // Stores user inputted banner URLs
-  const [loading, setLoading] = useState(false); // Loading state
+  const [subCategories, setSubCategories] = useState([]);
+  const [existingBanners, setExistingBanners] = useState(["", "", ""]);
+  const [newBanners, setNewBanners] = useState(["", "", ""]);
+  const [loading, setLoading] = useState(false);
 
   // Fetch existing category banners when both category and subcategory are selected
   useEffect(() => {
     if (category && subCategory) {
       fetchExistingBanners(category, subCategory);
     }
-  }, [category, subCategory]); // 🔄 Triggers when either category or subCategory changes
+  }, [category, subCategory]);
 
   const fetchExistingBanners = async (selectedCategory, selectedSubCategory) => {
     setLoading(true);
@@ -34,16 +34,13 @@ const UpdateCategoryBanner = () => {
 
       if (response.data.success && response.data.productBanners.length > 0) {
         const fetchedBanners = response.data.productBanners[0].banners || [];
-        setExistingBanners([
+        const paddedBanners = [
           fetchedBanners[0] || "",
           fetchedBanners[1] || "",
           fetchedBanners[2] || "",
-        ]);
-        setNewBanners([
-          fetchedBanners[0] || "",
-          fetchedBanners[1] || "",
-          fetchedBanners[2] || "",
-        ]);
+        ];
+        setExistingBanners(paddedBanners);
+        setNewBanners(paddedBanners);
       } else {
         setExistingBanners(["", "", ""]);
         setNewBanners(["", "", ""]);
@@ -69,14 +66,14 @@ const UpdateCategoryBanner = () => {
     const selectedSubCategory = e.target.value;
     setSubCategory(selectedSubCategory);
     if (category && selectedSubCategory) {
-      fetchExistingBanners(category, selectedSubCategory); // ✅ Fetch banners immediately
+      fetchExistingBanners(category, selectedSubCategory);
     }
   };
 
   // Handle banner URL input change
   const handleBannerChange = (index, value) => {
     const updatedBanners = [...newBanners];
-    updatedBanners[index] = value;
+    updatedBanners[index] = value || ""; // Store empty string if input is cleared
     setNewBanners(updatedBanners);
   };
 
@@ -84,14 +81,15 @@ const UpdateCategoryBanner = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Remove empty entries before sending
-    const filteredBanners = newBanners.filter((banner) => banner.trim() !== "");
+    // Use newBanners directly, including empty strings
+    const bannersToSubmit = newBanners;
 
     if (!category || !subCategory) {
       return toast.error("Please select category and subcategory!");
     }
 
-    if (filteredBanners.length === 0) {
+    // Check if all banners are empty
+    if (bannersToSubmit.every((banner) => banner.trim() === "")) {
       return toast.error("At least one banner URL is required.");
     }
 
@@ -99,12 +97,12 @@ const UpdateCategoryBanner = () => {
       setLoading(true);
       const response = await axios.post(
         `${server}/product-banner/create-product-banner`,
-        { category, subCategory, banners: filteredBanners },
+        { category, subCategory, banners: bannersToSubmit },
         { headers: { "Content-Type": "application/json" }, withCredentials: true }
       );
 
       toast.success(response.data.message || "Category banner updated successfully!");
-      navigate("/dashboard");
+      // navigate("/dashboard");
       window.location.reload();
     } catch (error) {
       console.error("Error updating category banner:", error);
@@ -143,7 +141,10 @@ const UpdateCategoryBanner = () => {
                       className="h-[150px] w-full object-cover rounded-md shadow-md"
                     />
                   ) : (
-                    <div key={index} className="h-[150px] w-full bg-gray-200 rounded-md flex items-center justify-center text-gray-500">
+                    <div
+                      key={index}
+                      className="h-[150px] w-full bg-gray-200 rounded-md flex items-center justify-center text-gray-500"
+                    >
                       No Banner
                     </div>
                   )
@@ -205,7 +206,11 @@ const UpdateCategoryBanner = () => {
               </div>
 
               <br />
-              <button type="submit" className="bg-blue-500 text-white text-lg font-semibold rounded-lg px-4 h-[45px] w-full">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`bg-blue-500 text-white text-lg font-semibold rounded-lg px-4 h-[45px] w-full ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"} transition duration-300`}
+              >
                 {loading ? "Updating..." : "Update Category Banner"}
               </button>
             </form>

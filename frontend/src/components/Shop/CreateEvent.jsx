@@ -8,7 +8,7 @@ import { createevent } from "../../redux/actions/event";
 
 const CreateEvent = () => {
   const { seller } = useSelector((state) => state.seller);
-  const { success, error } = useSelector((state) => state.events);
+  const { success, error, isLoading } = useSelector((state) => state.events); // Added isLoading
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -17,9 +17,9 @@ const CreateEvent = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
-  const [originalPrice, setOriginalPrice] = useState();
-  const [discountPrice, setDiscountPrice] = useState();
-  const [stock, setStock] = useState();
+  const [originalPrice, setOriginalPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [stock, setStock] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -28,23 +28,16 @@ const CreateEvent = () => {
     const minEndDate = new Date(startDate.getTime() + 3 * 24 * 60 * 60 * 1000);
     setStartDate(startDate);
     setEndDate(null);
-    document.getElementById("end-date").min = minEndDate.toISOString.slice(
-      0,
-      10
-    );
+    document.getElementById("end-date").min = minEndDate.toISOString().slice(0, 10);
   };
 
   const handleEndDateChange = (e) => {
-    const endDate = new Date(e.target.value);
-    setEndDate(endDate);
+    setEndDate(new Date(e.target.value));
   };
 
   const today = new Date().toISOString().slice(0, 10);
-
   const minEndDate = startDate
-    ? new Date(startDate.getTime() + 3 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .slice(0, 10)
+    ? new Date(startDate.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
     : "";
 
   useEffect(() => {
@@ -56,16 +49,13 @@ const CreateEvent = () => {
       navigate("/dashboard-events");
       window.location.reload();
     }
-  }, [dispatch, error, success]);
+  }, [dispatch, error, success, navigate]);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-
     setImages([]);
-
     files.forEach((file) => {
       const reader = new FileReader();
-
       reader.onload = () => {
         if (reader.readyState === 2) {
           setImages((old) => [...old, reader.result]);
@@ -77,12 +67,8 @@ const CreateEvent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const newForm = new FormData();
-
-    images.forEach((image) => {
-      newForm.append("images", image);
-    });
+    images.forEach((image) => newForm.append("images", image));
     const data = {
       name,
       description,
@@ -100,179 +86,219 @@ const CreateEvent = () => {
   };
 
   return (
-    <div className="w-[90%] 800px:w-[50%] bg-white  shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
-      <h5 className="text-[30px] font-Poppins text-center">Create Event</h5>
-      {/* create event form */}
-      <form onSubmit={handleSubmit}>
-        <br />
+    <div className="w-[90%] md:w-[60%] lg:w-[50%] mx-auto bg-white shadow-lg rounded-lg p-6 mt-10 max-h-[80vh] overflow-y-auto">
+      <h5 className="text-3xl font-Poppins text-center text-gray-800 mb-6">
+        Create Combo Deals
+      </h5>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Name */}
         <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            name="name"
             value={name}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter your event product name..."
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            required
           />
         </div>
-        <br />
+
+        {/* Description */}
         <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Description <span className="text-red-500">*</span>
           </label>
           <textarea
             cols="30"
-            required
-            rows="8"
-            type="text"
-            name="description"
+            rows="6"
             value={description}
-            className="mt-2 appearance-none block w-full pt-2 px-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter your event product description..."
-          ></textarea>
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            required
+          />
         </div>
-        <br />
+
+        {/* Category */}
         <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Category <span className="text-red-500">*</span>
           </label>
           <select
-            className="w-full mt-2 border h-[35px] rounded-[5px]"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            required
           >
-            <option value="Choose a category">Choose a category</option>
-            {categoriesData &&
-              categoriesData.map((i) => (
-                <option value={i.title} key={i.title}>
-                  {i.title}
-                </option>
-              ))}
+            <option value="">Choose a category</option>
+            {categoriesData?.map((i) => (
+              <option value={i.title} key={i.title}>
+                {i.title}
+              </option>
+            ))}
           </select>
         </div>
-        <br />
+
+        {/* Tags */}
         <div>
-          <label className="pb-2">Tags</label>
+          <label className="block text-sm font-medium text-gray-700">Tags</label>
           <input
             type="text"
-            name="tags"
             value={tags}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setTags(e.target.value)}
             placeholder="Enter your event product tags..."
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
           />
         </div>
-        <br />
-        <div>
-          <label className="pb-2">Original Price</label>
-          <input
-            type="number"
-            name="price"
-            value={originalPrice}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            onChange={(e) => setOriginalPrice(e.target.value)}
-            placeholder="Enter your event product price..."
-          />
+
+        {/* Prices */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Original Price
+            </label>
+            <input
+              type="number"
+              value={originalPrice}
+              onChange={(e) => setOriginalPrice(e.target.value)}
+              placeholder="Enter original price..."
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Discount Price <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={discountPrice}
+              onChange={(e) => setDiscountPrice(e.target.value)}
+              placeholder="Enter discount price..."
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+              required
+            />
+          </div>
         </div>
-        <br />
+
+        {/* Stock */}
         <div>
-          <label className="pb-2">
-            Price (With Discount) <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="price"
-            value={discountPrice}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            onChange={(e) => setDiscountPrice(e.target.value)}
-            placeholder="Enter your event product price with discount..."
-          />
-        </div>
-        <br />
-        <div>
-          <label className="pb-2">
+          <label className="block text-sm font-medium text-gray-700">
             Product Stock <span className="text-red-500">*</span>
           </label>
           <input
             type="number"
-            name="price"
             value={stock}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             onChange={(e) => setStock(e.target.value)}
-            placeholder="Enter your event product stock..."
+            placeholder="Enter product stock..."
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+            required
           />
         </div>
-        <br />
-        <div>
-          <label className="pb-2">
-            Event Start Date <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            name="price"
-            id="start-date"
-            value={startDate ? startDate.toISOString().slice(0, 10) : ""}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            onChange={handleStartDateChange}
-            min={today}
-            placeholder="Enter your event product stock..."
-          />
-        </div>
-        <br />
-        <div>
-          <label className="pb-2">
-            Event End Date <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            name="price"
-            id="start-date"
-            value={endDate ? endDate.toISOString().slice(0, 10) : ""}
-            className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            onChange={handleEndDateChange}
-            min={minEndDate}
-            placeholder="Enter your event product stock..."
-          />
-        </div>
-        <br />
-        <div>
-          <label className="pb-2">
-            Upload Images <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="file"
-            name=""
-            id="upload"
-            className="hidden"
-            multiple
-            onChange={handleImageChange}
-          />
-          <div className="w-full flex items-center flex-wrap">
-            <label htmlFor="upload">
-              <AiOutlinePlusCircle size={30} className="mt-3" color="#555" />
-            </label>
-            {images &&
-              images.map((i) => (
-                <img
-                  src={i}
-                  key={i}
-                  alt=""
-                  className="h-[120px] w-[120px] object-cover m-2"
-                />
-              ))}
-          </div>
-          <br />
+
+        {/* Dates */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Event Start Date <span className="text-red-500">*</span>
+            </label>
             <input
-              type="submit"
-              value="Create"
-              className="mt-2 cursor-pointer appearance-none text-center block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              type="date"
+              id="start-date"
+              value={startDate ? startDate.toISOString().slice(0, 10) : ""}
+              onChange={handleStartDateChange}
+              min={today}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+              required
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Event End Date <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              id="end-date"
+              value={endDate ? endDate.toISOString().slice(0, 10) : ""}
+              onChange={handleEndDateChange}
+              min={minEndDate}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Image Upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Upload Images <span className="text-red-500">*</span>
+          </label>
+          <div className="mt-2 flex items-center flex-wrap gap-2">
+            <label htmlFor="upload">
+              <AiOutlinePlusCircle
+                size={40}
+                className="text-gray-500 hover:text-indigo-500 transition duration-200 cursor-pointer"
+              />
+              <input
+                type="file"
+                id="upload"
+                className="hidden"
+                multiple
+                onChange={handleImageChange}
+              />
+            </label>
+            {images.map((i) => (
+              <img
+                src={i}
+                key={i}
+                alt="Preview"
+                className="h-24 w-24 object-cover rounded-lg shadow-md"
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-2 px-4 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                  />
+                </svg>
+                Creating...
+              </>
+            ) : (
+              "Create Event"
+            )}
+          </button>
         </div>
       </form>
     </div>

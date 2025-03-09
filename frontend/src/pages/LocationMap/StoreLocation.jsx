@@ -87,13 +87,13 @@ const StoreLocation = () => {
                     <span className="font-semibold">Address:</span> Puma Gas Appliances, Hafizabad Road, Gujranwala, Punjab, Pakistan
                   </p>
                   <p>
-                    <span className="font-semibold">Phone:</span> +92-55-4213387
+                    <span className="font-semibold">Phone:</span> 0307-7255575
                   </p>
                   <p>
-                    <span className="font-semibold">Fax:</span> +92-55-4442239
+                    <span className="font-semibold">Factory Number:</span> 055-4802131 , 055-4213381
                   </p>
                   <p>
-                    <span className="font-semibold">Hours:</span> Monday - Saturday, 9:00 AM - 6:00 PM (or your actual hours)
+                    <span className="font-semibold">Hours:</span> Saturday - Thursday, 9:00 AM - 5:00 PM
                   </p>
                 </div>
                 <button

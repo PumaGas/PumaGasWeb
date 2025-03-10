@@ -49,27 +49,30 @@ router.post(
 );
 
 // Get the Home Banner
-router.get(
-  "/get-home-banner",
-  catchAsyncErrors(async (req, res, next) => {
-    const banner = await Banner.findOne().sort({ createdAt: -1 });
+// router.get(
+//   "/get-home-banner",
+//   catchAsyncErrors(async (req, res, next) => {
+//     const banner = await Banner.findOne().sort({ createdAt: -1 });
 
-    if (!banner) {
-      return next(new ErrorHandler("No home banner found.", 404));
-    }
+//     if (!banner) {
+//       return next(new ErrorHandler("No home banner found.", 404));
+//     }
 
-    // Ensure response always contains 3 image slots, preserving null
-    const banners = [
-      banner.images[0] !== undefined ? banner.images[0] : null,
-      banner.images[1] !== undefined ? banner.images[1] : null,
-      banner.images[2] !== undefined ? banner.images[2] : null,
-    ];
+//     // Ensure response always contains 3 image slots, preserving null
+//     const banners = [
+//       banner.images[0] !== undefined ? banner.images[0] : null,
+//       banner.images[1] !== undefined ? banner.images[1] : null,
+//       banner.images[2] !== undefined ? banner.images[2] : null,
+//     ];
 
-    res.status(200).json({
-      success: true,
-      banners,
-    });
-  })
-);
-
+//     res.status(200).json({
+//       success: true,
+//       banners,
+//     });
+//   })
+// );
+router.get("/get-home-banner", (req, res) => {
+  console.log("✅ Banner Route Hit");
+  res.json({ success: true, banner: "test-banner" });
+});
 module.exports = router;

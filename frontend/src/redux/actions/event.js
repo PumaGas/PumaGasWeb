@@ -12,6 +12,7 @@ export const createevent = (data) => async (dispatch) => {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true, // If authentication is required
     };
 
     const { data: responseData } = await axios.post(

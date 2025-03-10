@@ -6,47 +6,36 @@ const bodyParser = require("body-parser");
 // Increase payload size limit
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-// app.use(express.json({ limit: "10mb" }));
-// app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // Handling uncaught Exception
 process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
-  console.log(`shutting down the server for handling uncaught exception`);
+  console.log(`Shutting down due to uncaught exception`);
 });
 
-// config
+// Config
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
     path: "config/.env",
   });
 }
 
-// connect db
+// Connect to database and configure Cloudinary once at startup
 connectDatabase();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  chunk_size: 10 * 1024 * 1024// 6MB chunk size for large file uploads
-})
-
-
-
-// create server
-const server = app.listen(process.env.PORT, () => {
-  console.log(
-    `Server is running on http://10.54.4.220:${process.env.PORT}`
-  );
+  chunk_size: 10 * 1024 * 1024 // 10MB chunk size for large file uploads
 });
 
-// unhandled promise rejection
-process.on("unhandledRejection", err => {
-  console.log(`Shutting down the server for ${err.message}`);
-  console.log(`shutting down the server for unhandle promise rejection`);
+// Export the app for Vercel serverless function
+module.exports = app;
 
-  server.close(() => {
-    process.exit(1);
-  });
+// Unhandled promise rejection
+process.on("unhandledRejection", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log(`Shutting down due to unhandled promise rejection`);
+  process.exit(1);
 });

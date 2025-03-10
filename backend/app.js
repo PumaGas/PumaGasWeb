@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 
-// Load environment variables in non-production
+// Load environment variables in non-production (moved to server.js, but kept here for completeness)
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
     path: "config/.env",
@@ -26,8 +26,8 @@ app.use(
 );
 
 // Middleware for parsing requests
-app.use(express.json({ limit: "50mb" })); // Set JSON payload limit to 50 MB
-app.use(express.urlencoded({ extended: true, limit: "50mb" })); // Set URL-encoded payload limit to 50 MB
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 // Debug middleware to log request and response headers
@@ -43,10 +43,10 @@ app.use((req, res, next) => {
 
 // Nodemailer transporter configuration
 const transporter = nodemailer.createTransport({
-  service: "gmail", // Use your email service
+  service: "gmail",
   auth: {
-    user: process.env.SMPT_MAIL, // Your email from .env (unchanged as requested)
-    pass: process.env.SMPT_PASSWORD, // Your app password from .env (unchanged as requested)
+    user: process.env.SMPT_MAIL,
+    pass: process.env.SMPT_PASSWORD,
   },
 });
 
@@ -88,9 +88,8 @@ app.use("/api/v2/product-banner", productBanner);
 app.post("/api/v2/send-email", async (req, res) => {
   const { name, email, phoneNumber, message } = req.body;
 
-  console.log("Request Body:", req.body); // Log incoming data
+  console.log("Request Body:", req.body);
 
-  // Validate required fields
   if (!name || !email || !message) {
     console.log("Validation failed: Missing required fields");
     return res.status(400).json({
@@ -100,8 +99,8 @@ app.post("/api/v2/send-email", async (req, res) => {
   }
 
   const mailOptions = {
-    from: email, // Sender's email (user's email)
-    to: process.env.SMPT_MAIL, // Your email from .env (unchanged as requested)
+    from: email,
+    to: process.env.SMPT_MAIL,
     subject: `New Contact Us Message from ${name}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
@@ -137,7 +136,7 @@ app.post("/api/v2/send-email", async (req, res) => {
     `,
   };
 
-  console.log("Mail Options:", mailOptions); // Log mail options
+  console.log("Mail Options:", mailOptions);
 
   try {
     await transporter.sendMail(mailOptions);
@@ -147,11 +146,11 @@ app.post("/api/v2/send-email", async (req, res) => {
       message: "Email sent successfully!",
     });
   } catch (error) {
-    console.error("Error sending email:", error.message); // Log detailed error
+    console.error("Error sending email:", error.message);
     res.status(500).json({
       success: false,
       message: "Failed to send email. Please try again later.",
-      error: error.message, // Include error message for debugging
+      error: error.message,
     });
   }
 });

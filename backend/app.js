@@ -5,43 +5,58 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 
-// Load environment variables in non-production (moved to server.js, but kept here for completeness)
+// Load environment variables (moved to server.js, but kept here for completeness)
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
     path: "config/.env",
   });
 }
 
+// ✅ Set frontend URL from .env or default to localhost
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-console.log("CORS Origin Set To:", frontendUrl);
+console.log("✅ CORS Origin Set To:", frontendUrl);
 
-// CORS configuration using only the cors package
+// ✅ CORS Middleware Configuration
 app.use(
   cors({
-    origin: frontendUrl, // https://puma-gas-web.vercel.app in production
+    origin: frontendUrl, // Ensure this matches the deployed frontend
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: "Content-Type,Authorization",
-    credentials: true, // Allow cookies and auth headers
+    credentials: true, // Allow cookies and authentication headers
   })
 );
 
-// Middleware for parsing requests
+// ✅ Middleware to manually set CORS headers (Ensures Vercel doesn't strip them)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", frontendUrl);
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
+// ✅ Middleware for parsing requests
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
-// Debug middleware to log request and response headers
+// ✅ Debug Middleware to log request/response headers
 app.use((req, res, next) => {
-  console.log(`Request URL: ${req.url}, Origin: ${req.headers.origin}`);
+  console.log(`📢 Request URL: ${req.url}, Origin: ${req.headers.origin}`);
   const originalSend = res.send;
   res.send = function (body) {
-    console.log(`Response Headers for ${req.url}:`, res.getHeaders());
+    console.log(`📨 Response Headers for ${req.url}:`, res.getHeaders());
     originalSend.call(this, body);
   };
   next();
 });
 
-// Nodemailer transporter configuration
+// ✅ Nodemailer Transporter Configuration
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -50,14 +65,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Root route for testing
+// ✅ Root Route (For Deployment Testing)
 app.get("/", (req, res) => {
-  console.log("API:", frontendUrl);
+  console.log("✅ API Root Accessed");
   res.send(`
     <html>
-      <head>
-        <title>Environment Variable</title>
-      </head>
+      <head><title>Environment Check</title></head>
       <body>
         <h1>Frontend URL:</h1>
         <p>${frontendUrl}</p>
@@ -66,7 +79,7 @@ app.get("/", (req, res) => {
   `);
 });
 
-// Import routes
+// ✅ Import API Routes
 const user = require("./controller/user");
 const shop = require("./controller/shop");
 const product = require("./controller/product");
@@ -75,7 +88,7 @@ const order = require("./controller/order");
 const banner = require("./controller/banner");
 const productBanner = require("./controller/productBanner");
 
-// Route middleware
+// ✅ Route Middleware
 app.use("/api/v2/user", user);
 app.use("/api/v2/order", order);
 app.use("/api/v2/shop", shop);
@@ -84,17 +97,25 @@ app.use("/api/v2/event", event);
 app.use("/api/v2/banner", banner);
 app.use("/api/v2/product-banner", productBanner);
 
-// Send Email Route
+// ✅ Send Email Route (Enhanced Validation)
 app.post("/api/v2/send-email", async (req, res) => {
   const { name, email, phoneNumber, message } = req.body;
 
-  console.log("Request Body:", req.body);
+  console.log("📧 Email Request Received:", req.body);
 
   if (!name || !email || !message) {
-    console.log("Validation failed: Missing required fields");
+    console.log("❌ Validation Failed: Missing required fields");
     return res.status(400).json({
       success: false,
       message: "Name, email, and message are required fields.",
+    });
+  }
+
+  if (!process.env.SMPT_MAIL) {
+    console.error("❌ Missing SMTP Mail Configuration");
+    return res.status(500).json({
+      success: false,
+      message: "SMTP server is not configured. Please contact support.",
     });
   }
 
@@ -136,17 +157,15 @@ app.post("/api/v2/send-email", async (req, res) => {
     `,
   };
 
-  console.log("Mail Options:", mailOptions);
-
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully");
+    console.log("✅ Email Sent Successfully");
     res.status(200).json({
       success: true,
       message: "Email sent successfully!",
     });
   } catch (error) {
-    console.error("Error sending email:", error.message);
+    console.error("❌ Error Sending Email:", error.message);
     res.status(500).json({
       success: false,
       message: "Failed to send email. Please try again later.",
@@ -155,7 +174,7 @@ app.post("/api/v2/send-email", async (req, res) => {
   }
 });
 
-// Error Handling Middleware
+// ✅ Error Handling Middleware
 app.use(ErrorHandler);
 
 module.exports = app;

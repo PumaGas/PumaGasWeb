@@ -13,18 +13,30 @@ const Hero = () => {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const response = await axios.get(`${server}/banner/get-home-banner`);
+        const response = await axios.get(`${server}/banner/get-home-banner`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // Sends cookies/auth tokens
+        });
+  
         if (response.data.success) {
-          setImages(response.data.banners); // Set banners from API
+          setImages(response.data.banners || []);
           console.log("Banners:", response.data.banners);
+        } else {
+          console.warn("Unexpected response format:", response.data);
         }
       } catch (error) {
-        console.error("Error fetching banners:", error);
+        console.error(
+          "Error fetching banners:",
+          error.response ? error.response.data : error.message
+        );
       }
     };
-
+  
     fetchBanners();
   }, []);
+  
 
   const settings = {
     dots: true,

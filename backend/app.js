@@ -5,58 +5,39 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 
-// Load environment variables (moved to server.js, but kept here for completeness)
+// Load environment variables
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
     path: "config/.env",
   });
 }
 
-// ✅ Set frontend URL from .env or default to localhost
+// Set frontend URL from environment variable
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 console.log("✅ CORS Origin Set To:", frontendUrl);
 
-// ✅ CORS Middleware Configuration
+// CORS Middleware Configuration
 app.use(
   cors({
-    origin: frontendUrl, // Ensure this matches the deployed frontend
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type,Authorization",
-    credentials: true, // Allow cookies and authentication headers
+    origin: frontendUrl,
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
-// ✅ Middleware to manually set CORS headers (Ensures Vercel doesn't strip them)
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", frontendUrl);
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
-
-// ✅ Middleware for parsing requests
+// Middleware for parsing requests
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
-// ✅ Debug Middleware to log request/response headers
+// Debug Middleware to log requests
 app.use((req, res, next) => {
   console.log(`📢 Request URL: ${req.url}, Origin: ${req.headers.origin}`);
-  const originalSend = res.send;
-  res.send = function (body) {
-    console.log(`📨 Response Headers for ${req.url}:`, res.getHeaders());
-    originalSend.call(this, body);
-  };
   next();
 });
 
-// ✅ Nodemailer Transporter Configuration
+// Nodemailer Transporter Configuration
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -65,7 +46,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ✅ Root Route (For Deployment Testing)
+// Root Route (For Deployment Testing)
 app.get("/", (req, res) => {
   console.log("✅ API Root Accessed");
   res.send(`
@@ -79,7 +60,7 @@ app.get("/", (req, res) => {
   `);
 });
 
-// ✅ Import API Routes
+// Import API Routes
 const user = require("./controller/user");
 const shop = require("./controller/shop");
 const product = require("./controller/product");
@@ -88,16 +69,16 @@ const order = require("./controller/order");
 const banner = require("./controller/banner");
 const productBanner = require("./controller/productBanner");
 
-// ✅ Route Middleware
+// Route Middleware
 app.use("/api/v2/user", user);
-app.use("/api/v2/order", order);
 app.use("/api/v2/shop", shop);
 app.use("/api/v2/product", product);
 app.use("/api/v2/event", event);
+app.use("/api/v2/order", order);
 app.use("/api/v2/banner", banner);
 app.use("/api/v2/product-banner", productBanner);
 
-// ✅ Send Email Route (Enhanced Validation)
+// Send Email Route
 app.post("/api/v2/send-email", async (req, res) => {
   const { name, email, phoneNumber, message } = req.body;
 
@@ -174,7 +155,7 @@ app.post("/api/v2/send-email", async (req, res) => {
   }
 });
 
-// ✅ Error Handling Middleware
+// Error Handling Middleware
 app.use(ErrorHandler);
 
 module.exports = app;

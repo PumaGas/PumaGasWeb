@@ -1,12 +1,12 @@
 {
   "version": 2,
   "name": "e-shop-tutorial",
-  "functions": {
-    "server.js": {
-      "runtime": "nodejs18.x",
-      "maxDuration": 60
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",

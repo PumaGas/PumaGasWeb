@@ -3,7 +3,7 @@ const ErrorHandler = require("./middleware/error");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const nodemailer = require("nodemailer"); // Add Nodemailer
+const nodemailer = require("nodemailer");
 
 // Load environment variables in non-production
 if (process.env.NODE_ENV !== "PRODUCTION") {
@@ -13,37 +13,40 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 }
 
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+console.log("CORS Origin Set To:", frontendUrl);
 
-// CORS configuration
+// CORS configuration using only the cors package
 app.use(
   cors({
-    origin: frontendUrl,
+    origin: frontendUrl, // https://puma-gas-web.vercel.app in production
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: "Content-Type,Authorization",
     credentials: true, // Allow cookies and auth headers
   })
 );
 
-// Manual CORS headers (optional, can remove if cors package works fine)
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", frontendUrl);
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
 // Middleware for parsing requests
 app.use(express.json({ limit: "50mb" })); // Set JSON payload limit to 50 MB
 app.use(express.urlencoded({ extended: true, limit: "50mb" })); // Set URL-encoded payload limit to 50 MB
 app.use(cookieParser());
 
+// Debug middleware to log request and response headers
+app.use((req, res, next) => {
+  console.log(`Request URL: ${req.url}, Origin: ${req.headers.origin}`);
+  const originalSend = res.send;
+  res.send = function (body) {
+    console.log(`Response Headers for ${req.url}:`, res.getHeaders());
+    originalSend.call(this, body);
+  };
+  next();
+});
+
 // Nodemailer transporter configuration
 const transporter = nodemailer.createTransport({
   service: "gmail", // Use your email service
   auth: {
-    user: process.env.SMPT_MAIL, // Your email from .env
-    pass: process.env.SMPT_PASSWORD, // Your app password from .env
+    user: process.env.SMPT_MAIL, // Your email from .env (unchanged as requested)
+    pass: process.env.SMPT_PASSWORD, // Your app password from .env (unchanged as requested)
   },
 });
 
@@ -82,7 +85,6 @@ app.use("/api/v2/banner", banner);
 app.use("/api/v2/product-banner", productBanner);
 
 // Send Email Route
-// Inside server.js
 app.post("/api/v2/send-email", async (req, res) => {
   const { name, email, phoneNumber, message } = req.body;
 
@@ -99,7 +101,7 @@ app.post("/api/v2/send-email", async (req, res) => {
 
   const mailOptions = {
     from: email, // Sender's email (user's email)
-    to: process.env.SMPT_MAIL, // Your email from .env (assuming this is a typo for SMTP_MAIL)
+    to: process.env.SMPT_MAIL, // Your email from .env (unchanged as requested)
     subject: `New Contact Us Message from ${name}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
@@ -153,6 +155,7 @@ app.post("/api/v2/send-email", async (req, res) => {
     });
   }
 });
+
 // Error Handling Middleware
 app.use(ErrorHandler);
 

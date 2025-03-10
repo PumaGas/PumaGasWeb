@@ -38,7 +38,7 @@ const Hero = () => {
     // Function to test API health
     const checkApiHealth = async () => {
       try {
-        const response = await axios.get(`${server}/api/v2/health`);
+        const response = await axios.get(`${server}/health`);
         console.log("✅ API Health Check:", response.data);
       } catch (error) {
         console.error(

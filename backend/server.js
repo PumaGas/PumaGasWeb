@@ -26,11 +26,8 @@ cloudinary.config({
   chunk_size: 10 * 1024 * 1024, // 10MB chunk size for large uploads
 });
 
-// Start the server
-const PORT = process.env.PORT || 8000; // Default to 8000 if no PORT is set
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on http://localhost:${PORT}`);
-});
+// Export the app for Vercel serverless function
+module.exports = app;
 
 // Unhandled promise rejections
 process.on("unhandledRejection", (err) => {

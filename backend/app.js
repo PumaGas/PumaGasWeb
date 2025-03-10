@@ -16,29 +16,29 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 console.log("✅ CORS Origin Set To:", frontendUrl);
 
-// CORS Middleware Configuration
+// CORS Middleware Configuration (simplified)
 app.use(
   cors({
-    origin: frontendUrl,
-    credentials: true,
+    origin: frontendUrl, // https://puma-gas-web.vercel.app in production
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // Required for credentials mode 'include'
   })
 );
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", `${frontendUrl}`);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true"); // ✅ Required for credentials mode 'include'
-  next();
-});
 
 // Middleware for parsing requests
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
-// Debug Middleware to log requests
+// Debug Middleware to log requests and responses
 app.use((req, res, next) => {
   console.log(`📢 Request URL: ${req.url}, Origin: ${req.headers.origin}`);
+  const originalSend = res.send;
+  res.send = function (body) {
+    console.log(`📢 Response Headers for ${req.url}:`, res.getHeaders());
+    originalSend.call(this, body);
+  };
   next();
 });
 

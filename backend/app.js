@@ -11,7 +11,7 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
     path: "config/.env",
   });
 }
-
+const backendurl=process.env.DB_URL;
 // Set frontend URL from environment variable
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 console.log("✅ CORS Origin Set To:", frontendUrl);
@@ -74,7 +74,8 @@ app.get("/", (req, res) => {
       <head><title>Environment Check</title></head>
       <body>
         <h1>Frontend URL:</h1>
-        <p>${frontendUrl}</p>
+        <p>${frontendUrl}
+        <br/>${backendurl}</p>
       </body>
     </html>
   `);

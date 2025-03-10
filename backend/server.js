@@ -21,7 +21,7 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 }
 
 // Connect db
-connectDatabase();
+//connectDatabase();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,

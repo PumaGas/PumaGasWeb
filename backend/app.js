@@ -17,14 +17,29 @@ const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 console.log("✅ CORS Origin Set To:", frontendUrl);
 
 // CORS Middleware Configuration (simplified)
+// CORS Middleware Configuration
 app.use(
   cors({
-    origin: frontendUrl, // https://puma-gas-web.vercel.app in production
+    origin: frontendUrl, // Ensure this matches your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // Required for credentials mode 'include'
   })
 );
+
+// Middleware to explicitly set CORS headers on all responses
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", frontendUrl);
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true"); // Required for cookies
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 
 // Middleware for parsing requests
 app.use(express.json({ limit: "50mb" }));

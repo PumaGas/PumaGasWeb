@@ -3,7 +3,7 @@
   "name": "e-shop-tutorial",
   "functions": {
     "server.js": {
-      "runtime": "@vercel/node",
+      "runtime": "nodejs18.x",
       "maxDuration": 60
     }
   },

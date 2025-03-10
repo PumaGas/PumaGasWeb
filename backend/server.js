@@ -7,46 +7,45 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
+
 // Handling uncaught Exception
 process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
-  console.log(`Shutting down the server for handling uncaught exception`);
+  console.log(`shutting down the server for handling uncaught exception`);
 });
 
-// Config
+// config
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
     path: "config/.env",
   });
 }
 
-// Connect db
+// connect db
 connectDatabase();
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", frontendUrl);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true"); 
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
   chunk_size: 6000000 // 6MB chunk size for large file uploads
+})
+
+
+
+// create server
+const server = app.listen(process.env.PORT, () => {
+  console.log(
+    `Server is running on http://10.54.4.220:${process.env.PORT}`
+  );
 });
 
-// Export app for Vercel serverless
-module.exports = app;
-
-// Unhandled promise rejection
-process.on("unhandledRejection", (err) => {
+// unhandled promise rejection
+process.on("unhandledRejection", err => {
   console.log(`Shutting down the server for ${err.message}`);
-  console.log(`Shutting down the server for unhandled promise rejection`);
-  process.exit(1);
+  console.log(`shutting down the server for unhandle promise rejection`);
+
+  server.close(() => {
+    process.exit(1);
+  });
 });

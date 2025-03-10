@@ -20,8 +20,6 @@ console.log("✅ CORS Origin Set To:", frontendUrl);
 app.use(
   cors({
     origin: frontendUrl,
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );

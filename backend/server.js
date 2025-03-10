@@ -1,8 +1,8 @@
-const app = require("./app");
+const app = require("./app"); 
 const connectDatabase = require("./db/Database");
 const cloudinary = require("cloudinary");
 
-// Handling uncaught Exception
+// Handling uncaught exceptions
 process.on("uncaughtException", (err) => {
   console.log(`Error: ${err.message}`);
   console.log(`Shutting down due to uncaught exception`);
@@ -15,21 +15,26 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
-// Connect to database and configure Cloudinary
+// Connect to database
 connectDatabase();
 
+// Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  chunk_size: 10 * 1024 * 1024, // 10MB chunk size for large file uploads
+  chunk_size: 10 * 1024 * 1024, // 10MB chunk size for large uploads
 });
 
-// Unhandled promise rejection
+// Start the server
+const PORT = process.env.PORT || 8000; // Default to 8000 if no PORT is set
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on http://localhost:${PORT}`);
+});
+
+// Unhandled promise rejections
 process.on("unhandledRejection", (err) => {
   console.log(`Error: ${err.message}`);
   console.log(`Shutting down due to unhandled promise rejection`);
   process.exit(1);
 });
-
-module.exports = app;

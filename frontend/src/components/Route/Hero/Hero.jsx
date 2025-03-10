@@ -11,6 +11,7 @@ const Hero = () => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
+    // Function to fetch banners
     const fetchBanners = async () => {
       try {
         const response = await axios.get(`${server}/banner/get-home-banner`, {
@@ -19,7 +20,7 @@ const Hero = () => {
           },
           withCredentials: true, // Sends cookies/auth tokens
         });
-  
+
         if (response.data.success) {
           setImages(response.data.banners || []);
           console.log("Banners:", response.data.banners);
@@ -33,10 +34,23 @@ const Hero = () => {
         );
       }
     };
-  
+
+    // Function to test API health
+    const checkApiHealth = async () => {
+      try {
+        const response = await axios.get(`${server}/api/v2/health`);
+        console.log("✅ API Health Check:", response.data);
+      } catch (error) {
+        console.error(
+          "❌ API Health Check Failed:",
+          error.response ? error.response.data : error.message
+        );
+      }
+    };
+
     fetchBanners();
+    checkApiHealth();
   }, []);
-  
 
   const settings = {
     dots: true,
@@ -66,10 +80,6 @@ const Hero = () => {
             alt="Banner"
             className="w-full h-full object-cover object-center"
           />
-          {/* Uncomment if you want the overlay content */}
-          {/* <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
-            <HeroContent />
-          </div> */}
         </div>
       ) : (
         <Slider {...settings} className="w-full h-[70vh] 800px:h-[80vh]">
@@ -83,10 +93,6 @@ const Hero = () => {
                 alt={`Slide ${index + 1}`}
                 className="w-full h-full object-cover object-center"
               />
-              {/* Uncomment if you want the overlay content */}
-              {/* <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
-                <HeroContent />
-              </div> */}
             </div>
           ))}
         </Slider>

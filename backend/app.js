@@ -160,6 +160,15 @@ app.post("/api/v2/send-email", async (req, res) => {
   }
 });
 
+
+app.get("/api/v2/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "✅ Backend API is running smoothly!",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Error Handling Middleware
 app.use(ErrorHandler);
 

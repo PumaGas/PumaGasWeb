@@ -452,7 +452,7 @@ const Header = ({ activeHeading }) => {
                   className="text-[18px] text-[#000000b7] font-semibold hover:text-blue-500 transition-colors duration-200"
                   onClick={() => setOpen(false)}
                 >
-                  Login
+                  Admin
                 </Link>
               )}
             </div>

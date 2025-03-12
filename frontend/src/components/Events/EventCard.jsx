@@ -124,10 +124,10 @@ const EventCard = ({ active, data }) => {
           }
           @keyframes dealFlash {
             0%, 100% {
-              background-color: #fef3c7;
+              background-color:rgb(255, 255, 255);
             }
             50% {
-              background-color: #fde68a;
+              background-color:rgb(135, 206, 235);
             }
           }
           .animate-dealFlash {

@@ -105,6 +105,28 @@ export const categoriesData = [
   },
   {
     id: 5,
+    title: "Gas Geyser",
+    image_Url: "https://i.postimg.cc/PfKQ6CJ5/gas-gyser-icon.jpg", // Placeholder URL
+    subcategories: [
+      { id: 1, title: "Gas Geyser", description: "" },
+      { id: 2, title: "Electric + Gas Geyser", description: "" },
+      { id: 3, title: "Fully Electric Geyser", description: "" },
+      { id: 4, title: "Instant Gas Geyser", description: "" },
+      { id: 5, title: "Instant Electric Geyser", description: "" },
+    ],
+  },
+  {
+    id: 6,
+    title: "Heaters",
+    image_Url: "https://i.postimg.cc/7YX90V4b/Heater.png", // Placeholder URL
+    subcategories: [
+      { id: 1, title: "Gas Heaters", description: "" },
+      { id: 2, title: "Electric + Gas Heaters", description: "" },
+      { id: 3, title: "Full Electric", description: "" },
+    ],
+  },
+  {
+    id: 10,
     title: "Hood",
     image_Url: "https://i.postimg.cc/DwZggXf6/Hoodicon.jpg", // Placeholder URL
     subcategories: [
@@ -113,18 +135,6 @@ export const categoriesData = [
       { id: 3, title: "Voice", description: "" },
       { id: 4, title: "Bluetooth", description: "" },
       { id: 5, title: "Imported", description: "" },
-    ],
-  },
-  {
-    id: 6,
-    title: "Gas Geyser",
-    image_Url: "https://i.postimg.cc/rw0hT46m/gyser-icon.webp", // Placeholder URL
-    subcategories: [
-      { id: 1, title: "Gas Geyser", description: "" },
-      { id: 2, title: "Electric + Gas Geyser", description: "" },
-      { id: 3, title: "Fully Electric Geyser", description: "" },
-      { id: 4, title: "Instant Gas Geyser", description: "" },
-      { id: 5, title: "Instant Electric Geyser", description: "" },
     ],
   },
   {
@@ -164,16 +174,6 @@ export const categoriesData = [
       { id: 7, title: "Pedestal Fan", description: "" },
       { id: 8, title: "Bracket Fan", description: "" },
       { id: 9, title: "Exhaust Fan", description: "" },
-    ],
-  },
-  {
-    id: 10,
-    title: "Heaters",
-    image_Url: "https://i.postimg.cc/7YX90V4b/Heater.png", // Placeholder URL
-    subcategories: [
-      { id: 1, title: "Gas Heaters", description: "" },
-      { id: 2, title: "Electric + Gas Heaters", description: "" },
-      { id: 3, title: "Full Electric", description: "" },
     ],
   },
   {

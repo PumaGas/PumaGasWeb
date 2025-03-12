@@ -48,7 +48,7 @@ const bannerStyles = `
   bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(to right, #ef4444, #f97316);
+  background: linear-gradient(to right,rgb(2, 133, 255),rgb(10, 66, 223));
   animation: growLine 0.6s ease-out forwards 0.8s;
 }
 @keyframes growLine {
@@ -80,6 +80,7 @@ const bannerStyles = `
 `;
 
 const ProductsPage = () => {
+  window.scrollTo(0, 0);
   const [searchParams] = useSearchParams();
   const subCategoryData = searchParams.get("subcategory");
   const categoryData = searchParams.get("category");
@@ -206,20 +207,6 @@ const ProductsPage = () => {
                 )}
               </div>
 
-              {/* Attractive Line Design from Hero */}
-              <div className="w-full py-4 bg-white">
-                <div className="relative w-full h-8 sm:h-12 md:h-16 overflow-hidden">
-                  <svg
-                    className="absolute w-full h-full text-red-600"
-                    preserveAspectRatio="none"
-                    viewBox="0 0 1440 100"
-                    fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg" // SVG namespace from W3C
-                  >
-                    <path d="M0,50 Q360,150 720,50 T1440,50 L1440,100 L0,100 Z" />
-                  </svg>
-                </div>
-              </div>
             </div>
           )}
 
@@ -228,7 +215,7 @@ const ProductsPage = () => {
             {/* Flex container for heading and sort dropdown */}
             <div className="flex justify-between items-center mb-6">
               {/* Heading with animated underline */}
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 capitalize animate-heading bg-gradient-to-r from-red-600 to-orange-500 text-transparent bg-clip-text underline-animation">
+              <h1 className="text-2xl md:text-3xl font-bold text-black capitalize underline-animation">
                 {getHeadingText()}
               </h1>
 

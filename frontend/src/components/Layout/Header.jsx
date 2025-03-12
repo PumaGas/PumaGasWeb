@@ -273,7 +273,7 @@ const Header = ({ activeHeading }) => {
         </div>
       </div>
 
-      {/* Mobile Header - Fixed Header with Line */}
+      {/* Mobile Header - Updated */}
       <div
         className={`${
           active ? "shadow-sm fixed top-0 left-0 z-10" : "relative"
@@ -286,6 +286,12 @@ const Header = ({ activeHeading }) => {
               className="text-[#3957db] hover:text-blue-600 transition-colors duration-200 animate-bounce-in cursor-pointer"
               onClick={() => setOpen(!open)}
             />
+           
+          </div>
+          <span className="text-sm font-semibold text-gray-900 tracking-wide">MENU</span>
+          <div>
+            
+           
           </div>
           <div className="w-[60%] relative group" ref={searchRef}>
             <div className="relative z-20">
@@ -309,7 +315,6 @@ const Header = ({ activeHeading }) => {
                 />
               )}
             </div>
-            {/* Non-Sticky Dropdown Over Banner */}
             {searchData && (
               <div className="absolute min-h-[20vh] max-h-[60vh] overflow-y-auto bg-white/95 backdrop-blur-md shadow-xl z-[10] p-4 w-full mt-2 rounded-xl border border-gray-200/50 animate-drop-down">
                 <div className="flex justify-between items-center mb-3">
@@ -339,16 +344,15 @@ const Header = ({ activeHeading }) => {
               <img
                 src={ImgUrl}
                 alt="Logo"
-                className="max-w-[42px] max-h-[42px] object-contain rounded-full shadow-md hover:opacity-80 transition-all duration-200 animate-bounce-in cursor-pointer"
+                className="max-w-[70px] max-h-[50px] object-contain rounded-full shadow-md hover:opacity-80 transition-all duration-200 animate-bounce-in cursor-pointer"
               />
             </Link>
           </div>
         </div>
-        {/* Horizontal Line Below Header */}
         <div className="w-full h-[1px] bg-gray-300"></div>
       </div>
 
-      {/* Mobile Sidebar - "Close" in Red with Animation */}
+      {/* Mobile Sidebar */}
       {open && (
         <div className="fixed w-full bg-[#0000005f] z-40 h-full top-0 left-0 transition-opacity duration-300">
           <div className="fixed w-[75%] bg-white h-screen top-[71px] left-0 z-50 overflow-y-auto shadow-2xl transform transition-transform duration-300 ease-in-out animate-slide-in-left">

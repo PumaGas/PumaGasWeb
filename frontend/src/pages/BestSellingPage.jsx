@@ -21,7 +21,7 @@ const BestSellingPage = () => {
     const content = document.querySelector('.main-content');
     if (header && content) {
       const headerHeight = header.offsetHeight;
-      content.style.paddingTop = ${headerHeight + 30}px;
+      content.style.paddingTop = `${headerHeight + 30}px`;
     }
   }, []);
 
@@ -41,14 +41,14 @@ const BestSellingPage = () => {
             {/* Background Accent */}
             <div className="absolute top-0 left-0 w-full h-56 bg-gradient-to-b from-orange-100/30 via-blue-100/30 to-transparent"></div>
 
-            <div className={${styles.section} relative}>
+            <div className={`${styles.section} relative`}>
               {/* Title Section */}
               <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 animate-heading-pop">
                   <span className="inline-block animate-letter" style={{ animationDelay: "0s" }}>T</span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "0.1s" }}>o</span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "0.2s" }}>p</span>
-                  <span className="inline-block animate-letter" style={{ animationDelay: "0.3s" }}> </span>
+                  <span className="inline-block animate-letter" style={{ animationDelay: "0.3s" }}> </span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "0.4s" }}>S</span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "0.5s" }}>e</span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "0.6s" }}>l</span>
@@ -56,7 +56,7 @@ const BestSellingPage = () => {
                   <span className="inline-block animate-letter" style={{ animationDelay: "0.8s" }}>i</span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "0.9s" }}>n</span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "1s" }}>g</span>
-                  <span className="inline-block animate-letter" style={{ animationDelay: "1.1s" }}> </span>
+                  <span className="inline-block animate-letter" style={{ animationDelay: "1.1s" }}> </span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "1.2s" }}>P</span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "1.3s" }}>r</span>
                   <span className="inline-block animate-letter" style={{ animationDelay: "1.4s" }}>o</span>
@@ -79,7 +79,7 @@ const BestSellingPage = () => {
                     <div
                       key={index}
                       className="animate-rise"
-                      style={{ animationDelay: ${index * 0.1}s }}
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <ProductCard data={i} />
                     </div>

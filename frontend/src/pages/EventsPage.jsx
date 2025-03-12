@@ -48,7 +48,7 @@ const EventsPage = () => {
                   <div
                     key={index}
                     className="animate-fadeInUp"
-                    style={{ animationDelay: ${index * 0.1}s }}
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <EventCard active={true} data={event} />
                   </div>

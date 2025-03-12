@@ -101,10 +101,10 @@ const Header = ({ activeHeading }) => {
   };
 
   const renderSearchItem = (item, index) => (
-    <Link key={index} to={/product/${item._id}} className="block">
+    <Link key={index} to={`/product/${item._id}`} className="block">
       <div className="w-full flex items-center py-2 border-b border-gray-100 hover:bg-gray-50 transition cursor-pointer animate-slide-in">
         <img
-          src={${item.images && item.images[0]?.url ? item.images[0].url : "default-image.jpg"}}
+          src={`${item.images && item.images[0]?.url ? item.images[0].url : "default-image.jpg"}`}
           alt={item.name}
           className="w-[40px] h-[40px] mr-[10px] object-cover rounded-md shadow-sm"
         />
@@ -118,7 +118,7 @@ const Header = ({ activeHeading }) => {
   return (
     <>
       {/* Desktop Header */}
-      <div className={${styles.section}}>
+      <div className={`${styles.section}`}>
         <div className="hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between">
           <div>
             <Link to="/">
@@ -185,7 +185,7 @@ const Header = ({ activeHeading }) => {
           active ? "shadow-sm fixed top-0 left-0 z-10" : null
         } transition hidden 800px:flex items-center justify-between w-full bg-[rgb(53,50,117)] h-[70px]`}
       >
-        <div className={${styles.section} relative ${styles.noramlFlex} justify-between}>
+        <div className={`${styles.section} relative ${styles.noramlFlex} justify-between`}>
           <div className="relative h-[60px] mt-[10px] w-[270px] hidden 1000px:block">
             <BiMenuAltLeft size={30} className="absolute top-3 left-2" />
             <button
@@ -225,7 +225,7 @@ const Header = ({ activeHeading }) => {
                             category.subcategories.map((sub, index) => (
                               <Link
                                 key={index}
-                                to={/products?category=${category.title}&subcategory=${sub.title}}
+                                to={`/products?category=${category.title}&subcategory=${sub.title}`}
                                 className="block py-1.5 px-4 text-[14px] text-[#00000091] hover:bg-gray-200"
                                 onClick={handleNavigation}
                               >
@@ -249,11 +249,11 @@ const Header = ({ activeHeading }) => {
               </div>
             )}
           </div>
-          <div className={${styles.noramlFlex}}>
+          <div className={`${styles.noramlFlex}`}>
             <Navbar active={activeHeading} />
           </div>
           <div className="flex">
-            <div className={${styles.noramlFlex}}>
+            <div className={`${styles.noramlFlex}`}>
               <div
                 className="relative cursor-pointer mr-[15px] p-2 hover:bg-[rgba(255,255,255,0.1)] rounded-full transition-colors duration-200"
                 onClick={() => setOpenWishlist(true)}
@@ -264,7 +264,7 @@ const Header = ({ activeHeading }) => {
                 </span>
               </div>
             </div>
-            <div className={${styles.noramlFlex}}>
+            <div className={`${styles.noramlFlex}`}>
               <Link to="/shop-login" className="text-[18px] text-[#fff] hover:text-gray-300 transition-colors duration-200">
                 Admin
               </Link>
@@ -390,7 +390,7 @@ const Header = ({ activeHeading }) => {
                           <img src={category.image_Url || "https://via.placeholder.com/24"} alt={category.title} className="w-6 h-6 mr-2 object-cover rounded animate-bounce-in" />
                           <span className="text-gray-800">{category.title || "Unnamed Category"}</span>
                         </div>
-                        <IoIosArrowForward size={16} className={text-gray-600 transition-transform duration-200 ${expandedCategory === category.id ? "rotate-90" : ""}} />
+                        <IoIosArrowForward size={16} className={`text-gray-600 transition-transform duration-200 ${expandedCategory === category.id ? "rotate-90" : ""}`} />
                       </button>
                       {expandedCategory === category.id && Array.isArray(category.subcategories) && (
                         <div className="pl-6 bg-gray-50 animate-fade-in">
@@ -398,7 +398,7 @@ const Header = ({ activeHeading }) => {
                             category.subcategories.map((sub, index) => (
                               <Link
                                 key={index}
-                                to={/products?category=${category.title}&subcategory=${sub.title}}
+                                to={`/products?category=${category.title}&subcategory=${sub.title}`}
                                 onClick={() => setOpen(false)}
                                 className="block py-2 px-4 text-[14px] text-[#00000091] hover:bg-gray-200 transition-colors duration-300 animate-slide-in"
                               >
@@ -424,7 +424,7 @@ const Header = ({ activeHeading }) => {
                 <div>
                   <Link to="/profile" onClick={() => setOpen(false)}>
                     <img
-                      src={${user.avatar?.url}}
+                      src={`${user.avatar?.url}`}
                       alt=""
                       className="w-[60px] h-[60px] rounded-full border-[3px] border-[#0eae88] hover:opacity-80 transition-opacity duration-300 animate-bounce-in"
                     />

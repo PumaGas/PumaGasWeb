@@ -14,7 +14,7 @@ const StoreLocation = () => {
   useEffect(() => {
     const fetchSellerPhone = async () => {
       try {
-        const response = await axios.get(${server}/shop/get-first-seller-phone);
+        const response = await axios.get(`${server}/shop/get-first-seller-phone`);
         if (response.data.success && response.data.phoneNumber) {
           setSellerPhone(response.data.phoneNumber);
         } else {
@@ -34,7 +34,7 @@ const StoreLocation = () => {
       return;
     }
     const message = "Hello, I have a question about your store location.";
-    const whatsappUrl = https://wa.me/+92${sellerPhone}?text=${encodeURIComponent(message)};
+    const whatsappUrl = `https://wa.me/+92${sellerPhone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 

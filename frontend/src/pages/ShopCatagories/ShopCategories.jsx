@@ -13,7 +13,7 @@ const ShopCategories = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header activeHeading={2} />
-      <div className={${styles.section} py-8 flex-grow}>
+      <div className={`${styles.section} py-8 flex-grow`}>
         <div className="relative flex justify-center items-center mb-8">
           <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-blue-500 tracking-wide drop-shadow-md">
             Top Category
@@ -27,7 +27,7 @@ const ShopCategories = () => {
               <div
                 key={category.id}
                 className="bg-white shadow-md rounded-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in"
-                style={{ animationDelay: ${index * 0.1}s }} // Staggered animation
+                style={{ animationDelay: `${index * 0.1}s` }} // Staggered animation
               >
                 <div className="relative">
                   <img
@@ -66,7 +66,7 @@ const ShopCategories = () => {
                 selectedCategory.subcategories.map((sub, index) => (
                   <Link
                     key={index}
-                    to={/products?category=${selectedCategory.title}&subcategory=${sub.title}}
+                    to={`/products?category=${selectedCategory.title}&subcategory=${sub.title}`}
                     className="block py-2 px-3 text-[14px] text-[#00000091] hover:bg-gray-200 rounded-md transition-colors duration-200"
                   >
                     {sub.title}

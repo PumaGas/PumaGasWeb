@@ -21,7 +21,7 @@ const ContactUs = () => {
   useEffect(() => {
     const fetchSellerPhone = async () => {
       try {
-        const response = await axios.get(${server}/shop/get-first-seller-phone, {
+        const response = await axios.get(`${server}/shop/get-first-seller-phone`, {
           withCredentials: true, // Include credentials (cookies)
         });
         if (response.data.success && response.data.phoneNumber) {
@@ -45,7 +45,7 @@ const ContactUs = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        ${server}/send-email,
+        `${server}/send-email`,
         contactData,
         {
           headers: {
@@ -76,8 +76,8 @@ const ContactUs = () => {
       toast.error("Contact phone number not available!");
       return;
     }
-    const message = Hello, I have a query from the Contact Us page. Name: ${contactData.name},\n Email: ${contactData.email},\n Phone: ${contactData.phoneNumber},\n ${contactData.message};
-    const whatsappUrl = https://wa.me/+92${sellerPhone}?text=${encodeURIComponent(message)};
+    const message = `Hello, I have a query from the Contact Us page. Name: ${contactData.name},\n Email: ${contactData.email},\n Phone: ${contactData.phoneNumber},\n ${contactData.message}`;
+    const whatsappUrl = `https://wa.me/+92${sellerPhone}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
@@ -87,7 +87,7 @@ const ContactUs = () => {
       <Header activeHeading={6} />
 
       {/* Main Content */}
-      <div className={${styles.section} py-12 px-4 md:px-8 flex-grow}>
+      <div className={`${styles.section} py-12 px-4 md:px-8 flex-grow`}>
         <h1 className="text-3xl font-bold text-center mb-8 text-[#000000b7]">
           Contact Us
         </h1>

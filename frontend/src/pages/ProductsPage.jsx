@@ -12,28 +12,72 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { server } from "../server";
 
-// New CategoryBannerContent component for the overlay
-const CategoryBannerContent = ({ category, subCategory }) => {
-  const categoryName = category ? category : "Products";
-  const subCategoryName = subCategory ? subCategory : "";
-
-  return (
-    <div className={`${styles.section} w-[90%] 800px:w-[60%] text-center`}>
-      <h1 className="text-[35px] leading-[1.2] 800px:text-[60px] text-white font-[600] capitalize">
-        Explore {categoryName} {subCategoryName ? `- ${subCategoryName}` : ""}
-      </h1>
-      <p className="pt-5 text-[16px] font-[Poppins] font-[400] text-white">
-        Discover our curated selection of {categoryName}{" "}
-        {subCategoryName ? subCategoryName : ""} products.
-      </p>
-      <a href="#products-grid" className="inline-block">
-        <div className="mt-5 px-6 py-3 bg-red-600 text-white text-lg font-semibold rounded-lg">
-          View Products
-        </div>
-      </a>
-    </div>
-  );
-};
+// Custom CSS for slide transition, heading animation, underline animation, and unique sort by
+const bannerStyles = `
+.slick-slide {
+  transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+  opacity: 0;
+  transform: scale(0.8);
+}
+.slick-slide.slick-active {
+  opacity: 1;
+  transform: scale(1);
+}
+.animate-heading {
+  animation: slideIn 0.8s ease-out forwards;
+}
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.underline-animation {
+  position: relative;
+  display: inline-block;
+}
+.underline-animation::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 3px;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, #ef4444, #f97316);
+  animation: growLine 0.6s ease-out forwards 0.8s;
+}
+@keyframes growLine {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 60%;
+  }
+}
+.sort-unique {
+  background: white;
+  transition: all 0.3s ease-in-out;
+}
+.sort-unique:hover {
+  transform: translateY(-2px);
+}
+.animate-bounce-subtle {
+  animation: bounceSubtle 2s infinite ease-in-out;
+}
+@keyframes bounceSubtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+`;
 
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
@@ -56,7 +100,7 @@ const ProductsPage = () => {
   const fetchCategoryBanners = async (category, subCategory) => {
     try {
       const response = await axios.get(
-        `${server}/product-banner/get-product-banners?category=${category}&subCategory=${subCategory}`
+        ${server}/product-banner/get-product-banners?category=${category}&subCategory=${subCategory}
       );
 
       if (response.data.success && response.data.productBanners.length > 0) {
@@ -73,7 +117,6 @@ const ProductsPage = () => {
   // Filter and sort products
   useEffect(() => {
     let filteredProducts = [...allProducts];
-
     if (subCategoryData) {
       filteredProducts = filteredProducts.filter(
         (i) => i.subCategory === subCategoryData
@@ -98,24 +141,32 @@ const ProductsPage = () => {
         (a, b) => Number(b.originalPrice) - Number(a.originalPrice)
       );
     }
-
     setData(filteredProducts);
   }, [allProducts, subCategoryData, minPrice, maxPrice, sortOrder]);
 
-  // Slider settings (used for category banners)
-  const sliderSettings = {
+  // Slider settings (matched with Hero component)
+  const settings = {
     dots: true,
     infinite: true,
-    speed: 500,
+    speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 1000,
+    autoplaySpeed: 3000,
     arrows: false,
+    fade: false,
   };
 
   // Filter out null or empty banners
   const validBanners = banners.filter((banner) => banner !== null && banner !== "");
+
+  // Updated heading text logic
+  const getHeadingText = () => {
+    if (subCategoryData) {
+      return subCategoryData.charAt(0).toUpperCase() + subCategoryData.slice(1).toLowerCase();
+    }
+    return "All Products";
+  };
 
   return (
     <>
@@ -125,71 +176,94 @@ const ProductsPage = () => {
         <div>
           <Header activeHeading={4} />
 
-          {/* Banner Section - Only render if valid banners exist */}
+          {/* Banner Section - Matched with Hero component */}
           {validBanners.length > 0 && (
-            <div className="relative w-full min-h-[70vh] 800px:min-h-[80vh] mt-4">
-              {validBanners.length === 1 ? (
-                <div className="relative w-full h-[70vh] 800px:h-[80vh]">
-                  <img
-                    src={validBanners[0]}
-                    alt="Banner"
-                    className="absolute top-0 left-0 w-full h-full object-cover"
-                  />
-                  {/* <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
-                    <CategoryBannerContent
-                      category={categoryData}
-                      subCategory={subCategoryData}
+            <div className="relative w-full">
+              {/* Inject custom styles */}
+              <style>{bannerStyles}</style>
+
+              <div className="relative w-full max-h-[90vh] overflow-hidden mt-4">
+                {validBanners.length === 1 ? (
+                  <div className="relative w-full">
+                    <img
+                      src={validBanners[0]}
+                      alt="Banner"
+                      className="w-full h-auto max-h-[90vh] object-contain object-center"
                     />
-                  </div> */}
-                </div>
-              ) : validBanners.length >= 2 ? (
-                <Slider {...sliderSettings} className="w-full h-full">
-                  {validBanners.map((banner, index) => (
-                    <div
-                      key={index}
-                      className="relative w-full h-[70vh] 800px:h-[80vh]"
-                    >
-                      <img
-                        src={banner}
-                        alt={`Banner ${index + 1}`}
-                        className="absolute top-0 left-0 w-full h-full object-cover"
-                      />
-                      {/* <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40">
-                        <CategoryBannerContent
-                          category={categoryData}
-                          subCategory={subCategoryData}
+                  </div>
+                ) : (
+                  <Slider {...settings} className="w-full">
+                    {validBanners.map((banner, index) => (
+                      <div key={index} className="relative w-full">
+                        <img
+                          src={banner}
+                          alt={Slide ${index + 1}}
+                          className="w-full h-auto max-h-[90vh] object-contain object-center"
                         />
-                      </div> */}
-                    </div>
-                  ))}
-                </Slider>
-              ) : null}
+                      </div>
+                    ))}
+                  </Slider>
+                )}
+              </div>
+
+              {/* Attractive Line Design from Hero */}
+              <div className="w-full py-4 bg-white">
+                <div className="relative w-full h-8 sm:h-12 md:h-16 overflow-hidden">
+                  <svg
+                    className="absolute w-full h-full text-red-600"
+                    preserveAspectRatio="none"
+                    viewBox="0 0 1440 100"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg" // SVG namespace from W3C
+                  >
+                    <path d="M0,50 Q360,150 720,50 T1440,50 L1440,100 L0,100 Z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* Product Section with ID for anchor link */}
-          <div className={`${styles.section} mt-5`} id="products-grid">
-            {/* Sorting and Filters */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center">
+          {/* Product Section */}
+          <div className={${styles.section} mt-5} id="products-grid">
+            {/* Flex container for heading and sort dropdown */}
+            <div className="flex justify-between items-center mb-6">
+              {/* Heading with animated underline */}
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 capitalize animate-heading bg-gradient-to-r from-red-600 to-orange-500 text-transparent bg-clip-text underline-animation">
+                {getHeadingText()}
+              </h1>
+
+              {/* Sort By Dropdown */}
+              <div className="flex items-center relative">
                 <select
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value)}
-                  className="border border-gray-300 rounded-md p-2"
+                  className="sort-unique border-none bg-white p-2 pl-4 pr-8 rounded-full shadow-md text-gray-700 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300 ease-in-out hover:shadow-lg hover:bg-indigo-50 appearance-none relative cursor-pointer z-10"
                 >
                   <option value="">Sort By</option>
                   <option value="lowToHigh">Price: Low to High</option>
                   <option value="highToLow">Price: High to Low</option>
                 </select>
+                <span className="absolute right-3 pointer-events-none z-10">
+                  <svg
+                    className="w-4 h-4 text-gray-500 animate-bounce-subtle"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg" // SVG namespace from W3C
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </span>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-200/20 to-indigo-300/20 blur-sm -z-10"></div>
               </div>
             </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 mb-12">
+            <div className="grid grid-cols-2 gap-[10px] sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12">
               {data.length > 0 ? (
                 data.map((i, index) => <ProductCard data={i} key={index} />)
               ) : (
-                <div className="w-full flex justify-center items-center mt-10">
+                <div className="col-span-2 w-full flex justify-center items-center mt-10">
                   <h1 className="text-center text-[20px] font-semibold text-gray-600">
                     Coming Soon...
                   </h1>

@@ -25,14 +25,14 @@ const EventCard = ({ active, data }) => {
 
   const handleMessageSubmit = async () => {
     try {
-      const response = await axios.get(${server}/shop/get-first-seller-phone);
+      const response = await axios.get(`${server}/shop/get-first-seller-phone`);
       if (!response.data.success || !response.data.phoneNumber) {
         toast.error("Unable to retrieve seller phone number!");
         return;
       }
       const phoneNumber = response.data.phoneNumber;
-      const message = Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${data.discountPrice}Rs;
-      const whatsappUrl = https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)};
+      const message = `Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${data.discountPrice}Rs`;
+      const whatsappUrl = `https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.error("Error fetching seller phone number:", error);
@@ -73,7 +73,7 @@ const EventCard = ({ active, data }) => {
         },
       };
       const response = await axios.post(
-        ${server}/order/create-order,
+        `${server}/order/create-order`,
         {
           customerEmail: orderDetails.customerEmail,
           customerName: orderDetails.customerName,
@@ -135,7 +135,7 @@ const EventCard = ({ active, data }) => {
           }
         `}
       </style>
-      <div className={w-full bg-white rounded-xl border border-gray-200 shadow-md ${active ? "unset" : "mb-6"} p-4 flex flex-col transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 max-h-[450px] relative overflow-hidden animate-dealFlash}>
+      <div className={`w-full bg-white rounded-xl border border-gray-200 shadow-md ${active ? "unset" : "mb-6"} p-4 flex flex-col transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 max-h-[450px] relative overflow-hidden animate-dealFlash`}>
         {/* Deal Badge */}
         <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow animate-pulseGlow">
           Hot Deal
@@ -144,7 +144,7 @@ const EventCard = ({ active, data }) => {
         {/* Image Section */}
         <div className="w-full flex-shrink-0">
           <img
-            src={${data.images[0]?.url}}
+            src={`${data.images[0]?.url}`}
             alt=""
             className="w-full h-40 object-contain m-auto rounded-lg"
           />
@@ -153,7 +153,7 @@ const EventCard = ({ active, data }) => {
         {/* Content Section */}
         <div className="w-full flex flex-col justify-between flex-grow p-2">
           <div>
-            <h2 className={${styles.productTitle} text-center text-base font-bold text-gray-900 line-clamp-1}>{data.name}</h2>
+            <h2 className={`${styles.productTitle} text-center text-base font-bold text-gray-900 line-clamp-1`}>{data.name}</h2>
             <p className="text-center text-gray-600 text-sm line-clamp-2">{data.description}</p>
             <div className="w-full flex justify-center py-1">
               <CountDown data={data} />
@@ -165,7 +165,7 @@ const EventCard = ({ active, data }) => {
           </div>
           
           <div className="flex flex-row justify-center items-center gap-2 w-full mt-2 flex-wrap">
-            <Link to={/product/${data._id}?isEvent=true} className="flex-shrink-0">
+            <Link to={`/product/${data._id}?isEvent=true`} className="flex-shrink-0">
               <div className="bg-blue-600 text-white rounded-md text-center text-xs font-semibold py-1.5 px-3 transition-all duration-300 hover:bg-blue-700 animate-pulseGlow shadow">
                 See Details
               </div>

@@ -100,7 +100,7 @@ const ProductsPage = () => {
   const fetchCategoryBanners = async (category, subCategory) => {
     try {
       const response = await axios.get(
-        ${server}/product-banner/get-product-banners?category=${category}&subCategory=${subCategory}
+        `${server}/product-banner/get-product-banners?category=${category}&subCategory=${subCategory}`
       );
 
       if (response.data.success && response.data.productBanners.length > 0) {
@@ -197,7 +197,7 @@ const ProductsPage = () => {
                       <div key={index} className="relative w-full">
                         <img
                           src={banner}
-                          alt={Slide ${index + 1}}
+                          alt={`Slide ${index + 1}`}
                           className="w-full h-auto max-h-[90vh] object-contain object-center"
                         />
                       </div>
@@ -224,7 +224,7 @@ const ProductsPage = () => {
           )}
 
           {/* Product Section */}
-          <div className={${styles.section} mt-5} id="products-grid">
+          <div className={`${styles.section} mt-5`} id="products-grid">
             {/* Flex container for heading and sort dropdown */}
             <div className="flex justify-between items-center mb-6">
               {/* Heading with animated underline */}

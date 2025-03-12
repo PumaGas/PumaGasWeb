@@ -26,7 +26,7 @@ const Hero = () => {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const response = await axios.get(${server}/banner/get-home-banner, {
+        const response = await axios.get(`${server}/banner/get-home-banner`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -49,7 +49,7 @@ const Hero = () => {
 
     const checkApiHealth = async () => {
       try {
-        const response = await axios.get(${server}/health);
+        const response = await axios.get(`${server}/health`);
         console.log("✅ API Health Check:", response.data);
       } catch (error) {
         console.error(
@@ -102,7 +102,7 @@ const Hero = () => {
               <div key={index} className="relative w-full">
                 <img
                   src={image}
-                  alt={Slide ${index + 1}}
+                  alt={`Slide ${index + 1}`}
                   className="w-full h-auto max-h-[90vh] object-contain object-center"
                 />
               </div>

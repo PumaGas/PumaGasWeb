@@ -71,15 +71,15 @@ const ProductDetails = ({ data }) => {
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get(${server}/shop/get-first-seller-phone);
+      const response = await axios.get(`${server}/shop/get-first-seller-phone`);
       if (!response.data.success || !response.data.phoneNumber) {
         toast.error("Unable to retrieve seller phone number!");
         return;
       }
       const price = isEvent === "true" && data.discountPrice ? data.discountPrice : data.originalPrice;
       const phoneNumber = response.data.phoneNumber;
-      const message = Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${price}Rs;
-      const whatsappUrl = https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)};
+      const message = `Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${price}Rs`;
+      const whatsappUrl = `https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)}`;
       const newWindow = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
         toast.info("Opening WhatsApp in current tab...");
@@ -138,7 +138,7 @@ const ProductDetails = ({ data }) => {
     };
 
     try {
-      const response = await axios.post(${server}/order/create-order, payload, {
+      const response = await axios.post(`${server}/order/create-order`, payload, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
@@ -168,7 +168,7 @@ const ProductDetails = ({ data }) => {
               {/* Image Section */}
               <div className="space-y-4 animate-slide-up">
                 <img
-                  src={${data && data.images[select]?.url}}
+                  src={`${data && data.images[select]?.url}`}
                   alt={data.name}
                   className="w-full h-96 object-contain rounded-lg transform transition duration-300 hover:scale-105"
                 />
@@ -176,7 +176,7 @@ const ProductDetails = ({ data }) => {
                   {data?.images.map((i, index) => (
                     <img
                       key={index}
-                      src={${i?.url}}
+                      src={`${i?.url}`}
                       alt=""
                       className={`h-20 w-20 object-cover rounded-md cursor-pointer transform transition duration-200 hover:scale-110 ${
                         select === index ? "border-2 border-teal-500 shadow-md" : ""
@@ -194,8 +194,8 @@ const ProductDetails = ({ data }) => {
                 <div className="flex items-center space-x-4">
                   <span className="text-2xl font-semibold text-teal-600 animate-pulse">
                     {isEvent === "true" && data.discountPrice
-                      ? ${data.discountPrice} Rs
-                      : ${data.originalPrice} Rs}
+                      ? `${data.discountPrice} Rs`
+                      : `${data.originalPrice} Rs`}
                   </span>
                   <span
                     className={`text-sm font-medium px-3 py-1 rounded-full ${

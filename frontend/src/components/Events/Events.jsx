@@ -9,8 +9,8 @@ const Events = () => {
   return (
     <div>
       {!isLoading && (
-        <div className={${styles.section}}>
-          <div className={${styles.heading} relative flex justify-center items-center py-4}>
+        <div className={`${styles.section}`}>
+          <div className={`${styles.heading} relative flex justify-center items-center py-4`}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 tracking-wide drop-shadow-lg animate-fade-in">
               Combo Deals
             </h1>

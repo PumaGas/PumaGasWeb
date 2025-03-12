@@ -75,7 +75,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
     }
 
     try {
-      const response = await axios.post(`${server}/order/create-order`, {
+      const response = await axios.post(${server}/order/create-order, {
         customerEmail: orderDetails.customerEmail,
         customerName: orderDetails.customerName,
         customerPhoneNumber: orderDetails.customerPhoneNumber,
@@ -109,7 +109,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
 
   const handleMessageSubmit = async () => {
     try {
-      const response = await axios.get(`${server}/shop/get-first-seller-phone`);
+      const response = await axios.get(${server}/shop/get-first-seller-phone);
       console.log("API Response:", response.data);
 
       if (!response.data.success || !response.data.phoneNumber) {
@@ -120,8 +120,8 @@ const ProductDetailsCard = ({ setOpen, data }) => {
       const phoneNumber = response.data.phoneNumber;
       console.log("Fetched Phone Number:", phoneNumber);
 
-      const message = `Hello, I am interested in your product: ${data.name} \n Price: ${data.originalPrice}Rs`;
-      const whatsappUrl = `https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)}`;
+      const message = Hello, I am interested in your product: ${data.name} \n Price: ${data.originalPrice}Rs;
+      const whatsappUrl = https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)};
       console.log("Generated WhatsApp URL:", whatsappUrl);
 
       const newWindow = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
@@ -154,22 +154,22 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   className="w-full h-auto rounded-md"
                 />
                 <div className="flex mt-2 items-center">
-                  <Link to={`/shop/preview/${data.shop._id}`} className="flex items-center">
+                 
                     <img
                       src={data.shop?.shopAvatar?.url || data.images[0]?.url}
                       alt="Shop Avatar"
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />
                     <h3 className={styles.shop_name}>{data.shop.name}</h3>
-                  </Link>
+                  
                 </div>
               </div>
 
               <div className="w-full md:w-1/2 pt-5 px-2">
-                <h1 className={`${styles.productTitle} text-lg md:text-xl`}>{data.name}</h1>
+                <h1 className={${styles.productTitle} text-lg md:text-xl}>{data.name}</h1>
                 <p className="text-sm md:text-base">{data.description}</p>
 
-                <h4 className={`${styles.productDiscountPrice} mt-3 text-lg font-semibold`}>{data.originalPrice}Rs</h4>
+                <h4 className={${styles.productDiscountPrice} mt-3 text-lg font-semibold}>{data.originalPrice}Rs</h4>
 
                 <div className="flex flex-col md:flex-row gap-3 mt-6">
                   <button

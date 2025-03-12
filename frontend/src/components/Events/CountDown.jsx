@@ -11,12 +11,12 @@ const CountDown = ({ data }) => {
     }, 1000);
 
     if (
-      typeof timeLeft.days === 'undefined' &&
-      typeof timeLeft.hours === 'undefined' &&
-      typeof timeLeft.minutes === 'undefined' &&
-      typeof timeLeft.seconds === 'undefined'
+      typeof timeLeft.days === "undefined" &&
+      typeof timeLeft.hours === "undefined" &&
+      typeof timeLeft.minutes === "undefined" &&
+      typeof timeLeft.seconds === "undefined"
     ) {
-      axios.delete(`${server}/event/delete-shop-event/${data._id}`);
+      axios.delete(${server}/event/delete-shop-event/${data._id});
     }
     return () => clearTimeout(timer);
   });
@@ -43,20 +43,42 @@ const CountDown = ({ data }) => {
     }
 
     return (
-      <span className="text-[25px] text-[#475ad2]">
-        {timeLeft[interval]} {interval}{" "}
+      <span key={interval} className="text-[10px] font-semibold text-blue-700">
+        {timeLeft[interval]}<span className="text-[8px] text-blue-500">{interval[0]}</span>{" "}
       </span>
     );
   });
 
   return (
-    <div>
-      {timerComponents.length ? (
-        timerComponents
-      ) : (
-        <span className="text-[red] text-[25px]">Time's Up</span>
-      )}
-    </div>
+    <>
+      <style>
+        {`
+          @keyframes tickPulse {
+            0% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.05);
+            }
+            100% {
+              transform: scale(1);
+            }
+          }
+          .animate-tickPulse {
+            animation: tickPulse 1s infinite;
+          }
+        `}
+      </style>
+      <div className="flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-full shadow-sm">
+        {timerComponents.length ? (
+          <div className="flex gap-1 animate-tickPulse">{timerComponents}</div>
+        ) : (
+          <span className="text-[10px] font-semibold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
+            Time's Up
+          </span>
+        )}
+      </div>
+    </>
   );
 };
 

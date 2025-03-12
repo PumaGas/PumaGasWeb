@@ -7,31 +7,37 @@ import Footer from "../../components/Layout/Footer";
 import styles from "../../styles/styles";
 
 const ShopCategories = () => {
+  window.scrollTo(0, 0);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header activeHeading={2} />
-      <div className={`${styles.section} py-8 flex-grow`}>
-        <h1 className="text-3xl font-bold text-center mb-8 text-[#000000b7]">
-          Top Category
-        </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className={${styles.section} py-8 flex-grow}>
+        <div className="relative flex justify-center items-center mb-8">
+          <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-blue-500 tracking-wide drop-shadow-md">
+            Top Category
+          </h1>
+          {/* Animated Underline */}
+          <div className="absolute bottom-0 w-20 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-pulse" />
+        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
           {Array.isArray(categoriesData) ? (
-            categoriesData.map((category) => (
+            categoriesData.map((category, index) => (
               <div
                 key={category.id}
-                className="bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105"
+                className="bg-white shadow-md rounded-lg overflow-hidden transform transition duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in"
+                style={{ animationDelay: ${index * 0.1}s }} // Staggered animation
               >
                 <div className="relative">
                   <img
-                    src={category.image_Url || ImgUrl} // Fixed fallback syntax
+                    src={category.image_Url || ImgUrl}
                     alt={category.title}
-                    className="w-full h-48 object-contain" // Changed to object-contain
+                    className="w-full h-48 object-contain transition-transform duration-300 hover:scale-110"
                   />
                   <button
                     onClick={() => setSelectedCategory(category)}
-                    className="w-full flex justify-between items-center py-3 px-4 bg-white text-[16px] text-[#000000b7] font-semibold hover:bg-gray-100 border-t border-gray-200"
+                    className="w-full flex justify-between items-center py-3 px-4 bg-white text-[16px] text-[#000000b7] font-semibold hover:bg-gray-50 border-t border-gray-200 transition-colors duration-200"
                   >
                     {category.title || "Unnamed Category"}
                     <IoIosArrowForward size={16} />
@@ -40,7 +46,7 @@ const ShopCategories = () => {
               </div>
             ))
           ) : (
-            <p className="text-center text-[16px] text-[#000000b7]">
+            <p className="text-center text-[16px] text-[#000000b7] col-span-2">
               No categories available
             </p>
           )}
@@ -50,7 +56,7 @@ const ShopCategories = () => {
       {/* Modal for Subcategories */}
       {selectedCategory && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full animate-fade-in-up">
             <h2 className="text-lg font-semibold text-[#000000b7] mb-4">
               {selectedCategory.title}
             </h2>
@@ -60,8 +66,8 @@ const ShopCategories = () => {
                 selectedCategory.subcategories.map((sub, index) => (
                   <Link
                     key={index}
-                    to={`/products?category=${selectedCategory.title}&subcategory=${sub.title}`}
-                    className="block py-2 px-3 text-[14px] text-[#00000091] hover:bg-gray-200 rounded-md transition"
+                    to={/products?category=${selectedCategory.title}&subcategory=${sub.title}}
+                    className="block py-2 px-3 text-[14px] text-[#00000091] hover:bg-gray-200 rounded-md transition-colors duration-200"
                   >
                     {sub.title}
                   </Link>
@@ -74,7 +80,7 @@ const ShopCategories = () => {
             </div>
             <button
               onClick={() => setSelectedCategory(null)}
-              className="mt-4 w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition"
+              className="mt-4 w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition-colors duration-200"
             >
               Close
             </button>
@@ -83,6 +89,23 @@ const ShopCategories = () => {
       )}
 
       <Footer />
+      {/* Inline Animation Styles */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.5s ease-out forwards;
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.4s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 };

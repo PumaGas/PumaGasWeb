@@ -111,19 +111,7 @@ const Hero = () => {
         )}
       </div>
 
-      {/* Attractive Line Design */}
-      <div className="w-full py-4 bg-white">
-        <div className="relative w-full h-8 sm:h-12 md:h-16 overflow-hidden">
-          <svg
-            className="absolute w-full h-full text-red-600"
-            preserveAspectRatio="none"
-            viewBox="0 0 1440 100"
-            fill="currentColor"
-          >
-            <path d="M0,50 Q360,150 720,50 T1440,50 L1440,100 L0,100 Z" />
-          </svg>
-        </div>
-      </div>
+    
     </div>
   );
 };

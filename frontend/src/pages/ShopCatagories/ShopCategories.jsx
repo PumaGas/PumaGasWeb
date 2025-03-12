@@ -15,11 +15,11 @@ const ShopCategories = () => {
       <Header activeHeading={2} />
       <div className={`${styles.section} py-8 flex-grow`}>
         <div className="relative flex justify-center items-center mb-8">
-          <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-blue-500 tracking-wide drop-shadow-md">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black tracking-wide drop-shadow-lg animate-fade-in">
             Top Category
           </h1>
           {/* Animated Underline */}
-          <div className="absolute bottom-0 w-20 h-1 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-pulse" />
+          <div className="absolute bottom-0 w-24 h-1 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-700 rounded-full animate-pulse" />
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
           {Array.isArray(categoriesData) ? (

@@ -76,7 +76,7 @@ const ProductDetails = ({ data }) => {
         toast.error("Unable to retrieve seller phone number!");
         return;
       }
-      const price = isEvent === "true" && data.discountPrice ? data.discountPrice : data.originalPrice;
+      const price = isEvent === "true" || data.discountPrice ? data.discountPrice : data.originalPrice;
       const phoneNumber = response.data.phoneNumber;
       const message = `Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${price}Rs`;
       const whatsappUrl = `https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -131,7 +131,7 @@ const ProductDetails = ({ data }) => {
         productId: data._id,
         productName: data.name,
         quantity: parseInt(orderData.quantity, 10),
-        price: isEvent === "true" && data.discountPrice ? data.discountPrice : data.originalPrice,
+        price: isEvent === "true" || data.discountPrice ? data.discountPrice : data.originalPrice,
       },
       orderStock: data.stock || 10,
       sellerId: data.shop._id,
@@ -190,10 +190,21 @@ const ProductDetails = ({ data }) => {
               {/* Product Info Section */}
               <div className="space-y-6 animate-slide-up animation-delay-200">
                 <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{data.name}</h1>
-                <p className="text-gray-600 text-lg leading-relaxed">{data.description}</p>
+                <ul className="space-y-2 text-gray-600 text-lg">
+  {data.description.split("\n").map((point, index) => (
+    <li
+      key={index}
+      className="flex items-start space-x-2 animate-slide-up"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+      <span className="text-teal-600 font-bold">•</span>
+      <span className="leading-relaxed">{point.replace(/^-\s*/, "")}</span>
+    </li>
+  ))}
+</ul>
                 <div className="flex items-center space-x-4">
                   <span className="text-2xl font-semibold text-teal-600 animate-pulse">
-                    {isEvent === "true" && data.discountPrice
+                    {isEvent === "true" || data.discountPrice
                       ? `${data.discountPrice} Rs`
                       : `${data.originalPrice} Rs`}
                   </span>
@@ -236,18 +247,14 @@ const ProductDetails = ({ data }) => {
 
                 {/* Shop Info */}
                 <div className="flex items-center space-x-4 animate-slide-up animation-delay-400">
-                 
-                    <img
-                      src={data?.shop?.avatar?.url || ImgUrl}
-                      alt={data.shop.name}
-                      className="w-12 h-12 rounded-full border-2 border-teal-500 transform transition duration-300 hover:scale-110"
-                    />
-                 
-                  
-                    <span className="text-lg font-medium text-gray-800 hover:text-teal-600 transition-colors duration-200">
-                      {data.shop.name}
-                    </span>
-                  
+                  <img
+                    src={data?.shop?.avatar?.url || ImgUrl}
+                    alt={data.shop.name}
+                    className="w-12 h-12 rounded-full border-2 border-teal-500 transform transition duration-300 hover:scale-110"
+                  />
+                  <span className="text-lg font-medium text-gray-800 hover:text-teal-600 transition-colors duration-200">
+                    {data.shop.name}
+                  </span>
                 </div>
               </div>
             </div>
@@ -255,7 +262,20 @@ const ProductDetails = ({ data }) => {
             {/* Product Details Section */}
             <div className="p-6 border-t bg-gray-50 animate-fade-in animation-delay-600">
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">Product Details</h2>
-              <p className="text-gray-700 leading-relaxed">{data.description}</p>
+              <ul className="space-y-3 text-gray-700">
+                {data.description.split("\n").map((point, index) => (
+                  <li
+                    key={index}
+                    className="flex items-start space-x-2 animate-slide-up"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <span className="text-teal-600 font-bold">•</span>
+                    <span className="leading-relaxed">
+                      {point.replace(/^-\s*/, "")} {/* Remove leading "- " if present */}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 

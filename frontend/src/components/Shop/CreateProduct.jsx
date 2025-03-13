@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AiOutlinePlusCircle } from "react-icons/ai";
+import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createProduct } from "../../redux/actions/product";
@@ -14,7 +14,7 @@ const CreateProduct = () => {
 
   const [images, setImages] = useState([]);
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [descriptionPoints, setDescriptionPoints] = useState([""]); // Array for description points
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState([]);
@@ -66,12 +66,43 @@ const CreateProduct = () => {
     setSubCategory("");
   };
 
+  // Handle description point changes
+  const handleDescriptionChange = (index, value) => {
+    const newPoints = [...descriptionPoints];
+    newPoints[index] = value;
+    setDescriptionPoints(newPoints);
+  };
+
+  // Add a new description point
+  const addDescriptionPoint = () => {
+    setDescriptionPoints([...descriptionPoints, ""]);
+  };
+
+  // Remove a description point
+  const removeDescriptionPoint = (index) => {
+    if (descriptionPoints.length > 1) {
+      const newPoints = descriptionPoints.filter((_, i) => i !== index);
+      setDescriptionPoints(newPoints);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Filter out empty points and join with bullet points or newlines
+    const description = descriptionPoints
+      .filter((point) => point.trim() !== "")
+      .map((point) => `- ${point}`)
+      .join("\n");
+
+    if (!description) {
+      toast.error("Please provide at least one description point!");
+      return;
+    }
+
     const productData = {
       name,
-      description,
+      description, // Send as a single string with bullet points
       category,
       subCategory,
       tags,
@@ -104,20 +135,38 @@ const CreateProduct = () => {
           />
         </div>
 
-        {/* Description */}
+        {/* Description Points */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Description <span className="text-red-500">*</span>
+            Description Key Points <span className="text-red-500">*</span>
           </label>
-          <textarea
-            cols="30"
-            rows="6"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter your product description..."
-            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
-            required
-          />
+          {descriptionPoints.map((point, index) => (
+            <div key={index} className="flex items-center space-x-2 mt-2">
+              <input
+                type="text"
+                value={point}
+                onChange={(e) => handleDescriptionChange(index, e.target.value)}
+                placeholder={`Key point ${index + 1}`}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                required={index === 0} // Only the first point is required
+              />
+              {descriptionPoints.length > 1 && (
+                <AiOutlineMinusCircle
+                  size={24}
+                  className="text-red-500 hover:text-red-700 cursor-pointer transition duration-200"
+                  onClick={() => removeDescriptionPoint(index)}
+                />
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addDescriptionPoint}
+            className="mt-2 flex items-center text-indigo-600 hover:text-indigo-800 transition duration-200"
+          >
+            <AiOutlinePlusCircle size={20} className="mr-1" />
+            Add Another Point
+          </button>
         </div>
 
         {/* Category */}

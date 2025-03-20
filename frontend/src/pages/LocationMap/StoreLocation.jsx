@@ -91,7 +91,7 @@ const StoreLocation = () => {
                     <span className="font-semibold">Phone:</span> 0307-7255575
                   </p>
                   <p>
-                    <span className="font-semibold">Factory Number:</span> 055-4802131 , 055-4213381
+                    <span className="font-semibold">Factory Number:</span> 055-4802131 , 055-4802287
                   </p>
                   <p>
                     <span className="font-semibold">Hours:</span> Saturday - Thursday, 9:00 AM - 5:00 PM

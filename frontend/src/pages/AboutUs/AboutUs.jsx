@@ -143,7 +143,7 @@ const AboutUs = () => {
               Phone: 0307-7255575
             </p>
             <p className="text-lg mb-6">
-              Fax: 055-4802131 , 055-4213381
+              Factory: 055-4802131 , 055-4802287
             </p>
             <button
               onClick={handleWhatsAppClick}

@@ -175,7 +175,7 @@ const ContactUs = () => {
             <p className="mt-2">
               Phone: {sellerPhone ? sellerPhone : "Loading..."}
             </p>
-            <p>Factory Phone: 055-4802131 , 055-4213381</p>
+            <p>Factory Phone: 055-4802131 , 055-4802287</p>
             <p>Email: pumagas30@gmail.com</p>
           </div>
         </div>

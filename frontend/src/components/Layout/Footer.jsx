@@ -32,7 +32,7 @@ const Footer = () => {
   <div className="text-center">
     <FaHeadset className="text-orange-500 mx-auto mb-2" size={30} style={{ filter: 'drop-shadow(0 0 5px rgba(249, 115, 22, 0.7))' }} />
     <h3 className="text-sm font-bold text-white">24/7 Support</h3>
-    <p className="text-xs text-gray-400">Available between 08AM-5PM</p>
+    <p className="text-xs text-gray-400">Available between 09AM-5PM</p>
   </div>
   {/* Fast Delivery */}
   <div className="text-center">
@@ -52,7 +52,7 @@ const Footer = () => {
             className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-4 cursor-pointer hover:scale-105 transition duration-300"
           />
           <p className="text-gray-300 text-sm sm:text-base max-w-[200px]">
-            Leader Of The Way <br />Puma Electric & Gas Appliances
+          Sarfraz and Brother's <br /><br />Leader Of The Way <br />Puma Electric & Gas Appliances
           </p>
           <div className="flex items-center mt-6 gap-4">
             <Link
@@ -72,7 +72,7 @@ const Footer = () => {
                 className="cursor-pointer hover:text-teal-400 transition duration-300"
               />
             </Link>
-            <Link to="https://www.instagram.com/" target="_blank" rel="noreferrer">
+            <Link to="https://www.instagram.com/puma.gas?igsh=MXB3a2dlNXZkeG90OQ==" target="_blank" rel="noreferrer">
               <AiFillInstagram
                 size={25}
                 className="cursor-pointer hover:text-teal-400 transition duration-300"

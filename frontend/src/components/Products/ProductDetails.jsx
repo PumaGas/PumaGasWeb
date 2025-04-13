@@ -76,9 +76,10 @@ const ProductDetails = ({ data }) => {
         toast.error("Unable to retrieve seller phone number!");
         return;
       }
+      console.log("discription", data.description);
       const price = isEvent === "true" || data.discountPrice ? data.discountPrice : data.originalPrice;
       const phoneNumber = response.data.phoneNumber;
-      const message = `Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${price}Rs`;
+      const message = `Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${price}Rs \n and discription: \n ${data.description}`;
       const whatsappUrl = `https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)}`;
       const newWindow = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {

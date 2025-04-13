@@ -124,7 +124,8 @@ const ProductDetailsCard = ({ setOpen, data }) => {
       console.log("Fetched Phone Number:", phoneNumber);
 
       // Use effective price in WhatsApp message
-      const message = `Hello, I am interested in your product: ${data.name} \n Price: ${effectivePrice}Rs`;
+      console.log("discription", data.description);
+      const message = `Hello, I am interested in your product: ${data.name} \n Price: ${effectivePrice}Rs \n and the discription is \n ${data.description} \n `;
       const whatsappUrl = `https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)}`;
       console.log("Generated WhatsApp URL:", whatsappUrl);
 

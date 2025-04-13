@@ -30,8 +30,9 @@ const EventCard = ({ active, data }) => {
         toast.error("Unable to retrieve seller phone number!");
         return;
       }
+      console.log("discription", data.description);
       const phoneNumber = response.data.phoneNumber;
-      const message = `Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${data.discountPrice}Rs`;
+      const message = `Hello, I am interested in your product: ${data.name}. Here is the image: ${data.images[0]?.url} \n Price: ${data.discountPrice}Rs \n and discription: \n ${data.description}`;
       const whatsappUrl = `https://wa.me/+92${phoneNumber}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
